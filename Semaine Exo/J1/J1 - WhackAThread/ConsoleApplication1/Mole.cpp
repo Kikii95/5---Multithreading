@@ -1,5 +1,6 @@
 #include "Mole.h"
 #include <chrono>
+#include <iostream>
 
 using namespace std::chrono;
 
@@ -41,6 +42,7 @@ void Mole::run() {
             bool expected = true;
             if (_alive.compare_exchange_strong(expected, false)) {
                 if (_onExpire) _onExpire(_id);
+                std::cout << "KILL: Thread #" << _id << "\n";
             }
             break;
         }

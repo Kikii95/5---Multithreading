@@ -2,6 +2,7 @@
 #include <random>
 #include <algorithm>
 #include <chrono>
+#include <iostream>
 
 using namespace std::chrono;
 
@@ -46,7 +47,12 @@ int MoleFactory::spawn(char key) {
     auto m = std::make_shared<Mole>(id, k, Mole::ms(life), onExpire, onKill);
     m->start();
     _moles.push_back(m);
+    std::cout << "Mole #" << id
+        << " | Touche : '" << k
+        << "' | Durée : " << life << " ms\n";
+
     return id;
+
 }
 
 bool MoleFactory::tryKillByKey(char key, int& outMoleId) {

@@ -10,7 +10,7 @@ using namespace std::chrono;
 
 int main() {
     std::cout << "Whack-a-thread (modulaire). Appuie ESC pour quitter.\n";
-    int difficulty = 2; // 1 facile, 2 normal, 3 difficile
+    int difficulty = 1; // 1 facile, 2 normal, 3 difficile
     Game game(difficulty);
     game.start();
 
@@ -28,7 +28,7 @@ int main() {
                 std::cout << "TUE: Mole #" << moleId << " +1 point\n";
             }
             else {
-                std::cout << "RIEN (mauvaise touche) -1 point\n";
+                std::cout << "RIEN (pas bon touche) -1 point\n";
             }
         }
 

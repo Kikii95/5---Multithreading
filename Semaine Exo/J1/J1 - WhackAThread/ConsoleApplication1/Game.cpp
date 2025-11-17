@@ -7,12 +7,12 @@ using namespace std::chrono;
 Game::Game(int difficulty)
     : _running(false), _score(0)
 {
-    _spawnIntervalMs = 1200 - (difficulty * 300);
+    _spawnIntervalMs = 5000 - ((difficulty * difficulty) * (difficulty / 20));
     if (_spawnIntervalMs < 250) _spawnIntervalMs = 250;
 
-    _minLifeMs = 500 - (difficulty * 120);
-    if (_minLifeMs < 120) _minLifeMs = 120;
-    _maxLifeMs = 1500 - (difficulty * 250);
+    _minLifeMs = (_spawnIntervalMs / 5) - ((difficulty * difficulty) * (difficulty / 48));
+    if (_minLifeMs < 100) _minLifeMs = 100;
+    _maxLifeMs = _spawnIntervalMs - ((difficulty * difficulty) * (difficulty / 10));
     if (_maxLifeMs < 300) _maxLifeMs = 300;
 
     _factory = std::make_unique<MoleFactory>(_minLifeMs, _maxLifeMs);
@@ -36,7 +36,6 @@ void Game::stop() {
 void Game::spawnerLoop() {
     while (_running) {
         int id = _factory->spawn(0);
-        std::cout << "Mole #" << id << " spawn (appuie la bonne touche)\n";
         std::this_thread::sleep_for(milliseconds(_spawnIntervalMs));
         _factory->cleanup(); 
     }

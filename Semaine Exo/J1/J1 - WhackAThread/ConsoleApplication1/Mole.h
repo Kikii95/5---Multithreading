@@ -21,16 +21,16 @@ public:
     bool isAlive() const;
 
     void start();
-
     bool kill();
-
     void join();
 
 private:
     int _id;
     char _key;
+
     ms _lifetime;
     std::atomic<bool> _alive;
+
     std::thread _thread;
     std::function<void(int)> _onExpire;
     std::function<void(int)> _onKill;
