@@ -1,65 +1,176 @@
 #include "Game.h"
-#include <chrono>
-#include <iostream>
+#include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 
-using namespace std::chrono;
+DWORD WINAPI SpawnerThreadFunc(LPVOID param) {
+    Game* game = (Game*)param;
 
-Game::Game(int difficulty)
-    : _running(false), _score(0)
-{
-    _spawnIntervalMs = 5000 - ((difficulty * difficulty) * (difficulty / 20));
-    if (_spawnIntervalMs < 250) _spawnIntervalMs = 250;
+    while (InterlockedCompareExchange(&game->running, 0, 0) == 1) {
+        SpawnMole(game);
+        Sleep(game->spawnIntervalMs);
+        CleanupDeadMoles(game);
+    }
 
-    _minLifeMs = (_spawnIntervalMs / 5) - ((difficulty * difficulty) * (difficulty / 48));
-    if (_minLifeMs < 100) _minLifeMs = 100;
-    _maxLifeMs = _spawnIntervalMs - ((difficulty * difficulty) * (difficulty / 10));
-    if (_maxLifeMs < 300) _maxLifeMs = 300;
-
-    _factory = std::make_unique<MoleFactory>(_minLifeMs, _maxLifeMs);
+    return 0;
 }
 
-Game::~Game() {
-    stop();
+Game* CreateGame(int difficulty) {
+    Game* game = (Game*)malloc(sizeof(Game));
+    if (game == NULL) return NULL;
+
+    memset(game, 0, sizeof(Game));
+
+    game->difficulty = difficulty;
+    game->score = 0;
+    game->running = 0;
+    game->nextMoleId = 1;
+
+    switch (difficulty) {
+    case 1: // Easy
+        game->spawnIntervalMs = 2000;
+        game->minLifeMs = 2000;
+        game->maxLifeMs = 5000;
+        break;
+    case 2: // Medium
+        game->spawnIntervalMs = 1000;
+        game->minLifeMs = 1000;
+        game->maxLifeMs = 3500;
+        break;
+    case 3: // Hard
+        game->spawnIntervalMs = 500;
+        game->minLifeMs = 500;
+        game->maxLifeMs = 2000;
+        break;
+    default:
+        game->spawnIntervalMs = 1000;
+        game->minLifeMs = 500;
+        game->maxLifeMs = 5000;
+        break;
+    }
+
+    return game;
 }
 
-void Game::start() {
-    _running = true;
-    _spawner = std::thread(&Game::spawnerLoop, this);
+BOOL StartGame(Game* game) {
+    InterlockedExchange(&game->running, 1);
+
+    DWORD threadId;
+    game->spawnerThread = CreateThread(
+        NULL,
+        0,
+        SpawnerThreadFunc,
+        game,
+        0,
+        &threadId
+    );
+
+    if (game->spawnerThread == NULL) {
+        DWORD error = GetLastError();
+        printf("ERROR: Failed to create spawner thread! Error code: %lu\n", error);
+        InterlockedExchange(&game->running, 0);
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
-void Game::stop() {
-    _running = false;
-    if (_spawner.joinable()) _spawner.join();
-    _factory->cleanup();
-}
+void StopGame(Game* game) {
+    InterlockedExchange(&game->running, 0);
 
-void Game::spawnerLoop() {
-    while (_running) {
-        int id = _factory->spawn(0);
-        std::this_thread::sleep_for(milliseconds(_spawnIntervalMs));
-        _factory->cleanup(); 
+    if (game->spawnerThread != NULL) {
+        WaitForSingleObject(game->spawnerThread, INFINITE);
+        CloseHandle(game->spawnerThread);
+    }
+
+    for (int i = 0; i < game->moleCount; i++) {
+        if (game->moles[i] != NULL) {
+            WaitMole(game->moles[i]);
+        }
     }
 }
 
-void Game::spawnOne() {
-    _factory->spawn(0);
-}
-
-bool Game::tryKill(char key, int& outMoleId) {
-    bool killed = _factory->tryKillByKey(key, outMoleId);
-    if (killed) {
-        _score.fetch_add(1);
+void SpawnMole(Game* game) {
+    if (game->moleCount >= MAX_MOLES) {
+        return; 
     }
-    else {
-        _score.fetch_sub(1);
+
+    char key = RandomKey();
+    int lifetime = RandomRange(game->minLifeMs, game->maxLifeMs);
+
+    Mole* mole = CreateMole(game->nextMoleId++, key, lifetime);
+    if (mole == NULL) return;
+
+    game->moles[game->moleCount++] = mole;
+}
+
+BOOL TryKillMole(Game* game, char key, int* outMoleId) {
+    if (key >= 'a' && key <= 'z') {
+        key = key - 'a' + 'A';
     }
-    return killed;
+
+    for (int i = 0; i < game->moleCount; i++) {
+        Mole* mole = game->moles[i];
+        if (mole != NULL && mole->key == key && IsMoleAlive(mole)) {
+            if (KillMole(mole)) {
+                if (outMoleId != NULL) {
+                    *outMoleId = mole->id;
+                }
+                InterlockedIncrement(&game->score);
+                return TRUE;
+            }
+        }
+    }
+
+    InterlockedDecrement(&game->score);
+    return FALSE;
 }
 
-int Game::getScore() const {
-    return _score.load();
+int GetScore(Game* game) {
+    return InterlockedCompareExchange(&game->score, 0, 0);
 }
 
-int Game::livingMoles() const {
-    return _factory->countAlive();
+int GetLivingMoles(Game* game) {
+    int count = 0;
+    for (int i = 0; i < game->moleCount; i++) {
+        if (game->moles[i] != NULL && IsMoleAlive(game->moles[i])) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void CleanupDeadMoles(Game* game) {
+    int writeIndex = 0;
+    for (int readIndex = 0; readIndex < game->moleCount; readIndex++) {
+        Mole* mole = game->moles[readIndex];
+
+        if (mole != NULL && !IsMoleAlive(mole)) {
+            if (InterlockedCompareExchange(&mole->killed, 0, 0) == 0) {
+                InterlockedDecrement(&game->score);
+            }
+
+            WaitMole(mole);
+            DestroyMole(mole);
+        }
+        else {
+            game->moles[writeIndex++] = mole;
+        }
+    }
+
+    game->moleCount = writeIndex;
+}
+
+void DestroyGame(Game* game) {
+    if (game == NULL) return;
+
+    StopGame(game);
+
+    for (int i = 0; i < game->moleCount; i++) {
+        if (game->moles[i] != NULL) {
+            DestroyMole(game->moles[i]);
+        }
+    }
+
+    free(game);
 }

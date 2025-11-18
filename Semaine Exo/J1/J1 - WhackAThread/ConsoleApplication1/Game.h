@@ -1,36 +1,43 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "MoleFactory.h"
-#include <thread>
-#include <atomic>
-#include <functional>
+#include <windows.h>
+#include "Mole.h"
 
-class Game {
-public:
-    Game(int difficulty); 
-    ~Game();
+#define MAX_MOLES 100
 
-    void start();
-    void stop();
+typedef struct {
+    Mole* moles[MAX_MOLES];    
+    int moleCount;             
+    volatile LONG score;        
+    volatile LONG running;      
+    HANDLE spawnerThread;       
 
-    void spawnOne();
-    bool tryKill(char key, int& outMoleId);
+    int difficulty;             
+    int spawnIntervalMs;       
+    int minLifeMs;              
+    int maxLifeMs;             
+    int nextMoleId;             
+} Game;
 
-    int getScore() const;
-    int livingMoles() const;
+DWORD WINAPI SpawnerThreadFunc(LPVOID param);
 
-private:
-    std::unique_ptr<MoleFactory> _factory;
-    std::thread _spawner;
-    std::atomic<bool> _running;
-    std::atomic<int> _score;
+Game* CreateGame(int difficulty);
 
-    int _spawnIntervalMs;
-    int _minLifeMs;
-    int _maxLifeMs;
+BOOL StartGame(Game* game);
 
-    void spawnerLoop();
-};
+void StopGame(Game* game);
+
+void SpawnMole(Game* game);
+
+BOOL TryKillMole(Game* game, char key, int* outMoleId);
+
+int GetScore(Game* game);
+
+int GetLivingMoles(Game* game);
+
+void CleanupDeadMoles(Game* game);
+
+void DestroyGame(Game* game);
 
 #endif // GAME_H

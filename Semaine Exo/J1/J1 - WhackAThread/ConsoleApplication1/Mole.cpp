@@ -1,55 +1,81 @@
 #include "Mole.h"
-#include <chrono>
-#include <iostream>
+#include "utils.h"
+#include <stdlib.h>
 
-using namespace std::chrono;
+DWORD WINAPI MoleThreadFunc(LPVOID param) {
+    Mole* mole = (Mole*)param;
 
-Mole::Mole(int id, char key, ms lifetime,
-    std::function<void(int)> onExpire,
-    std::function<void(int)> onKill)
-    : _id(id), _key(key), _lifetime(lifetime),
-    _alive(false), _onExpire(onExpire), _onKill(onKill)
-{
-}
+    DWORD startTime = GetTickCount();
+    DWORD endTime = startTime + mole->lifetimeMs;
 
-Mole::~Mole() {
-    if (_thread.joinable()) _thread.join();
-}
-
-int Mole::getId() const { return _id; }
-char Mole::getKey() const { return _key; }
-bool Mole::isAlive() const { return _alive.load(); }
-
-void Mole::start() {
-    _alive = true;
-    _thread = std::thread(&Mole::run, this);
-}
-
-bool Mole::kill() {
-    bool expected = true;
-    if (_alive.compare_exchange_strong(expected, false)) {
-        if (_onKill) _onKill(_id);
-        return true;
-    }
-    return false;
-}
-
-void Mole::run() {
-    auto start = steady_clock::now();
-    while (_alive) {
-        auto now = steady_clock::now();
-        if (duration_cast<milliseconds>(now - start) >= _lifetime) {
-            bool expected = true;
-            if (_alive.compare_exchange_strong(expected, false)) {
-                if (_onExpire) _onExpire(_id);
-                std::cout << "KILL: Thread #" << _id << "\n";
-            }
-            break;
+    while (GetTickCount() < endTime) {
+        if (InterlockedCompareExchange(&mole->alive, 0, 0) == 0) {
+            return 0;
         }
-        std::this_thread::sleep_for(milliseconds(10));
+
+        Sleep(10); 
+    }
+
+    InterlockedExchange(&mole->alive, 0);
+    InterlockedExchange(&mole->killed, 0);
+
+    return 0;
+}
+
+Mole* CreateMole(int id, char key, int lifetimeMs) {
+    Mole* mole = (Mole*)malloc(sizeof(Mole));
+    if (mole == NULL) return NULL;
+
+    mole->id = id;
+    mole->key = key;
+    mole->lifetimeMs = lifetimeMs;
+    mole->alive = 1;
+    mole->killed = 0;
+    mole->startTime = GetTickCount();
+
+    DWORD threadId;
+    mole->thread = CreateThread(
+        NULL,                   
+        0,                     
+        MoleThreadFunc,        
+        mole,                 
+        0,                     
+        &threadId
+    );
+
+    if (mole->thread == NULL) {
+        free(mole);
+        return NULL;
+    }
+
+    return mole;
+}
+
+BOOL IsMoleAlive(Mole* mole) {
+    return InterlockedCompareExchange(&mole->alive, 0, 0) == 1;
+}
+
+BOOL KillMole(Mole* mole) {
+    if (InterlockedCompareExchange(&mole->alive, 0, 1) == 1) {
+        InterlockedExchange(&mole->killed, 1);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+void WaitMole(Mole* mole) {
+    if (mole->thread != NULL) {
+        WaitForSingleObject(mole->thread, INFINITE);
     }
 }
 
-void Mole::join() {
-    if (_thread.joinable()) _thread.join();
+void DestroyMole(Mole* mole) {
+    if (mole == NULL) return;
+
+    if (mole->thread != NULL) {
+        CloseHandle(mole->thread);
+    }
+
+    free(mole);
 }

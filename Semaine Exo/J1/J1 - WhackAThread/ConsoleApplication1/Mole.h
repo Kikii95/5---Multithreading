@@ -1,41 +1,28 @@
 #ifndef MOLE_H
 #define MOLE_H
 
-#include <thread>
-#include <atomic>
-#include <functional>
-#include <chrono>
+#include <windows.h>
 
-class Mole {
-public:
-    using Clock = std::chrono::steady_clock;
-    using ms = std::chrono::milliseconds;
+typedef struct {
+    int id;
+    char key;              
+    int lifetimeMs;        
+    volatile LONG alive;    
+    volatile LONG killed;   
+    HANDLE thread;          
+    DWORD startTime;      
+} Mole;
 
-    Mole(int id, char key, ms lifetime,
-        std::function<void(int)> onExpire,
-        std::function<void(int)> onKill);
-    ~Mole();
+DWORD WINAPI MoleThreadFunc(LPVOID param);
 
-    int getId() const;
-    char getKey() const;
-    bool isAlive() const;
+Mole* CreateMole(int id, char key, int lifetimeMs);
 
-    void start();
-    bool kill();
-    void join();
+BOOL IsMoleAlive(Mole* mole);
 
-private:
-    int _id;
-    char _key;
+BOOL KillMole(Mole* mole);
 
-    ms _lifetime;
-    std::atomic<bool> _alive;
+void WaitMole(Mole* mole);
 
-    std::thread _thread;
-    std::function<void(int)> _onExpire;
-    std::function<void(int)> _onKill;
-
-    void run();
-};
+void DestroyMole(Mole* mole);
 
 #endif // MOLE_H

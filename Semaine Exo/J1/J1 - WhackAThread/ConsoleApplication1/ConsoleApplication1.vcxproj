@@ -126,12 +126,11 @@
     <ClCompile Include="ConsoleApplication1.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Mole.cpp" />
-    <ClCompile Include="MoleFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Mole.h" />
-    <ClInclude Include="MoleFactory.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
