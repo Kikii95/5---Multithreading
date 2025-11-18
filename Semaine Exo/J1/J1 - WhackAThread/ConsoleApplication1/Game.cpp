@@ -26,7 +26,6 @@ Game* CreateGame(int difficulty) {
     game->running = 0;
     game->nextMoleId = 1;
 
-    // Create message queue for thread communication
     game->messageQueue = CreateMessageQueue();
     if (game->messageQueue == NULL) {
         free(game);
@@ -110,7 +109,6 @@ void SpawnMole(Game* game) {
 
     game->moles[game->moleCount++] = mole;
 
-    // Push spawn message
     Message msg(MSG_MOLE_SPAWNED, mole->id, mole->key);
     TryPushMessage(game->messageQueue, msg);
 }
@@ -183,7 +181,6 @@ void DestroyGame(Game* game) {
         }
     }
 
-    // Destroy message queue
     if (game->messageQueue != NULL) {
         DestroyMessageQueue(game->messageQueue);
     }

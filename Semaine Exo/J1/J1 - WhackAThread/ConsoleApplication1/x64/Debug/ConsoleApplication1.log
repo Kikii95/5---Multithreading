@@ -1,6 +1,30 @@
 ﻿  ConsoleApplication1.cpp
   Game.cpp
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\GameQueue.h(20,43): warning C4190: 'PopMessage' a une liaison C spécifiée, mais retourne 'Message' UDT qui est incompatible avec C
+  (compiler le fichier source 'ConsoleApplication1.cpp')
+      C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\Message.h(10,8):
+      voir la déclaration de 'Message'
+  
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\GameQueue.h(20,43): warning C4190: 'PopMessage' a une liaison C spécifiée, mais retourne 'Message' UDT qui est incompatible avec C
+  (compiler le fichier source 'Game.cpp')
+      C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\Message.h(10,8):
+      voir la déclaration de 'Message'
+  
+  GameQueue.cpp
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\GameQueue.h(20,43): warning C4190: 'PopMessage' a une liaison C spécifiée, mais retourne 'Message' UDT qui est incompatible avec C
+  (compiler le fichier source 'GameQueue.cpp')
+      C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\Message.h(10,8):
+      voir la déclaration de 'Message'
+  
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\GameQueue.cpp(24,48): warning C4190: 'PopMessage' a une liaison C spécifiée, mais retourne 'Message' UDT qui est incompatible avec C
+      C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\Message.h(10,8):
+      voir la déclaration de 'Message'
+  
+  Mole.cpp
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\GameQueue.h(20,43): warning C4190: 'PopMessage' a une liaison C spécifiée, mais retourne 'Message' UDT qui est incompatible avec C
+  (compiler le fichier source 'Mole.cpp')
+      C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\ConsoleApplication1\Message.h(10,8):
+      voir la déclaration de 'Message'
+  
   Génération de code en cours...
-  ConsoleApplication1.vcxproj -> C:\Users\killi\source\Année 3\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\x64\Debug\ConsoleApplication1.exe
-  'pwsh.exe' n'est pas reconnu en tant que commande interne
-  ou externe, un programme exécutable ou un fichier de commandes.
+  ConsoleApplication1.vcxproj -> C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J1\J1 - WhackAThread\x64\Debug\ConsoleApplication1.exe

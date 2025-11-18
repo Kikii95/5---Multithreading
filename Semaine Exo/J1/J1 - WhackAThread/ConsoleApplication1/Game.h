@@ -13,7 +13,7 @@ typedef struct {
     volatile LONG score;
     volatile LONG running;
     HANDLE spawnerThread;
-    GameMessageQueue messageQueue;  // SafeQueue for thread communication
+    GameMessageQueue messageQueue; 
 
     int difficulty;
     int spawnIntervalMs;

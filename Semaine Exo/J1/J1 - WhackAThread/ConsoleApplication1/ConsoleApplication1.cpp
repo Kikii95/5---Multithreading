@@ -135,12 +135,10 @@ int main() {
             }
         }
 
-        // Process message queue (pop events from threads)
         Message msg;
         while (TryPopMessage(game->messageQueue, &msg)) {
             switch (msg.type) {
             case MSG_MOLE_SPAWNED:
-                // Optional: log spawn events
                 break;
             case MSG_MOLE_KILLED:
                 PrintAtf(0, UI_EVENTS_Y, COLOR_GREEN,

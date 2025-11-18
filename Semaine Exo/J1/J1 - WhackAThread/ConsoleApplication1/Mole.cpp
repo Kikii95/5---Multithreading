@@ -11,18 +11,15 @@ DWORD WINAPI MoleThreadFunc(LPVOID param) {
 
     while (GetTickCount() < endTime) {
         if (InterlockedCompareExchange(&mole->alive, 0, 0) == 0) {
-            // Killed by user, exit immediately
             return 0;
         }
 
         Sleep(10);
     }
 
-    // Timeout expired - push message to queue
     InterlockedExchange(&mole->alive, 0);
     InterlockedExchange(&mole->killed, 0);
 
-    // Push EXPIRED message
     if (mole->messageQueue != NULL) {
         Message msg(MSG_MOLE_EXPIRED, mole->id, mole->key);
         TryPushMessage(mole->messageQueue, msg);
@@ -69,7 +66,6 @@ BOOL KillMole(Mole* mole) {
     if (InterlockedCompareExchange(&mole->alive, 0, 1) == 1) {
         InterlockedExchange(&mole->killed, 1);
 
-        // Push KILLED message
         if (mole->messageQueue != NULL) {
             Message msg(MSG_MOLE_KILLED, mole->id, mole->key);
             TryPushMessage(mole->messageQueue, msg);

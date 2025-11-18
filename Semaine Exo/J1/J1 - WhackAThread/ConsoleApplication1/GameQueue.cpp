@@ -1,7 +1,6 @@
 #include "GameQueue.h"
 #include "SafeQueue.h"
 
-// C++ implementation using SafeQueue template
 typedef SafeQueue<Message, 100> MessageQueue;
 
 extern "C" {

@@ -50,3 +50,72 @@ Thread B a besoin de Data 1 pour libérer 2.
 
 Les deux threads vont donc attendre indéfiniement que l'autre thread libère sa ressource, ce qu'il ne fera jamais. 
 
+Critical Section
+La section critique de la WIN API est un mélange de plusieurs concepts de synchronisation :
+
+Un spinlock
+Un sémaphore
+Je suspecte qu'il y ait une condition variable aussi
+Il s'agit d'un objet très "General Purpose", qui fonctionnera de manière optimisée dans la plupart des cas.
+
+Dans la programmation multithreading, on a (TRES) souvent recours à une SafeQueue. En effet, elle répond à au moins deux besoins fondamentaux :
+
+Une liste de tâches lourdes à exécuter en FIFO. Chaque Thread va aller piocher une nouvelle tâche à exécuter lorsqu'il a fini la précédente. Et, potentiellement, un autre thread va la remplir en même temps.
+La communication entre Threads : Chaque thread est associé à une queue d'objets de types "Messages". De cette manière, un autre thread peut accéder à cette queue et lui adresser une nouvelle tâche à exécuter, un comportement à adopter ou autre.
+  // On lui passe un pointeur vers la section critique (objet global, partagé par les threads)
+  VOID InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection); 
+
+  // Alternativement, on peut y adjoindre un Spin (avant d'entrer en phase Wait)
+  BOOL InitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount);
+
+  // Si on utilise l'initialisation classique, on peut toujours appeler 
+  DWORD SetCriticalSectionSpinCount(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount);
+
+  // On entre dans la section critique, sinon le thread spin & entre en attente (si elle est verouillée).
+  // Cette fonction peut lever des exceptions : EXCEPTION_POSSIBLE_DEADLOCK, STATUS_POSSIBLE_DEADLOCK. 
+  VOID EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
+
+  // Alternativement, si on veut juste essayer d'entrer 
+  // Renvoie si on a pu acquérir le verrou 
+  BOOL TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection); 
+
+  // On oublie évidemment pas 
+  VOID LeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
+
+  // On oublie pas non plus 
+  VOID DeleteCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
+Exercice : création d'une SafeQueue
+Consignes :
+
+Utiliser CriticalSection pour la synchronisation
+Tenter d'utiliser cette queue avec au moins 2 threads clients (pop) et deux threads serveurs (push) en même temps, sans aucun Sleep.
+La Queue doit être une classe (template) : de taille statique pour commencer (spécifiée en template en plus du type)
+Les condition variables & Events
+Les condition variables sont également des outils essentiels dans la gestion de la synchronisation multithreading, puisqu'elle permet simplement de mettre des threads en attente (Sleep, ne consomme plus de CPU) puis de les réveiller lorsque la condition variable est signalée. Ce n'est pas à proprement parler un outil de sécurité mémoire, mais cela permet d'économiser beaucoup de cycles CPU (0 polling). On les utilise associées à des locks (Critical Section ou SRWLock).
+
+Conditions Variables
+
+BOOL SleepConditionVariableCS(
+  PCONDITION_VARIABLE ConditionVariable, 
+  PCRITICAL_SECTION CriticalSection, 
+  DWORD timeout
+);
+
+/* Cette fonction précédente va : 
+  - Release la condition variable 
+  - Dormir jusqu'à ce que l'une des fonctions suivantes soit appelée, ou que le timeout soit dépassé
+*/
+
+VOID WakeAllConditionVariable(PCONDITION_VARIABLE ConditionVariable); // Réveille tous les threads qui attendent la condition
+VOID WakeConditionVariable(PCONDITION_VARIABLE ConditionVariable); // Réveille 1 thread qui attend 
+On peut accomplir des choses similaires avec les events :
+
+// Un thread attend un événement 
+wait_res = WaitForSingleObject(event_handle, INFINITE); 
+
+// Jusqu'à ce qu'un autre thread appelle 
+SetEvent(event_handle);
+// L'event est alors "true" (signalé) jusqu'à ce qu'un thread appelle 
+ResetEvent(event_handle); // Uniquement si l'argument ManualReset est True quand l'event a été créé
+
+// Si l'event n'est pas en ManualReset (donc reset automatique) : un seul thread est libéré lorsqu'on appelle SetEvent

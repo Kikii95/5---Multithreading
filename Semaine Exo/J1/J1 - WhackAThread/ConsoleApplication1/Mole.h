@@ -12,7 +12,7 @@ typedef struct {
     volatile LONG killed;
     HANDLE thread;
     DWORD startTime;
-    GameMessageQueue messageQueue;  // Pointer to game message queue
+    GameMessageQueue messageQueue;
 } Mole;
 
 DWORD WINAPI MoleThreadFunc(LPVOID param);

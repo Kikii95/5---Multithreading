@@ -1,10 +1,46 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\killi\\source\\Ann\u00E9e 3\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\",
+  "WorkspaceRootPath": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\killi\\source\\Ann\u00E9e 3\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Mole.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Mole.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\GameQueue.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\GameQueue.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\ConsoleApplication1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\ConsoleApplication1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\SafeQueue.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\SafeQueue.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Mole.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Mole.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Message.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Message.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\GameQueue.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\GameQueue.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CB50D35-CBBB-4493-994B-6C397D071E55}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,34 +50,137 @@
       "DocumentGroups": [
         {
           "DockedWidth": 204,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "utils.h",
-              "DocumentMoniker": "C:\\Users\\killi\\source\\Ann\u00E9e 3\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\utils.h",
-              "RelativeDocumentMoniker": "ConsoleApplication1\\utils.h",
-              "ToolTip": "C:\\Users\\killi\\source\\Ann\u00E9e 3\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\utils.h",
-              "RelativeToolTip": "ConsoleApplication1\\utils.h",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAAB8AAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-11-18T05:54:25.738Z",
+              "Title": "Mole.cpp",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Mole.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Mole.cpp",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Mole.cpp*",
+              "RelativeToolTip": "ConsoleApplication1\\Mole.cpp*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-11-18T11:54:47.472Z",
               "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 202,
-          "SelectedChildIndex": -1,
-          "Children": [
+            },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{d3750d8a-574b-4fb3-b7e2-aa8af40e8231}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "GameQueue.cpp",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\GameQueue.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\GameQueue.cpp",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\GameQueue.cpp*",
+              "RelativeToolTip": "ConsoleApplication1\\GameQueue.cpp*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-11-18T11:54:44.461Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ConsoleApplication1.cpp",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\ConsoleApplication1.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\ConsoleApplication1.cpp",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\ConsoleApplication1.cpp*",
+              "RelativeToolTip": "ConsoleApplication1\\ConsoleApplication1.cpp*",
+              "ViewState": "AgIAAJkAAAAAAAAAAAAAAIwAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-11-18T11:54:24.197Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SafeQueue.h",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\SafeQueue.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\SafeQueue.h",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\SafeQueue.h*",
+              "RelativeToolTip": "ConsoleApplication1\\SafeQueue.h*",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAAAGsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-11-18T11:54:01.732Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Message.h",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Message.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Message.h",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Message.h*",
+              "RelativeToolTip": "ConsoleApplication1\\Message.h*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-11-18T11:53:50.461Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "GameQueue.h",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\GameQueue.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\GameQueue.h",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\GameQueue.h*",
+              "RelativeToolTip": "ConsoleApplication1\\GameQueue.h*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-11-18T11:53:33.517Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "utils.h",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\utils.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\utils.h",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\utils.h",
+              "RelativeToolTip": "ConsoleApplication1\\utils.h",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAABUAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-11-18T11:49:25.316Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Game.cpp",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Game.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Game.cpp",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Game.cpp*",
+              "RelativeToolTip": "ConsoleApplication1\\Game.cpp*",
+              "ViewState": "AgIAAKIAAAAAAAAAAAAAALYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-11-18T05:53:29.407Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Game.h",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Game.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Game.h",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Game.h*",
+              "RelativeToolTip": "ConsoleApplication1\\Game.h*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-11-18T05:56:22.462Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Mole.h",
+              "DocumentMoniker": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Mole.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Mole.h",
+              "ToolTip": "C:\\Users\\kabboud\\Documents\\GitHub\\5---Multithreading\\Semaine Exo\\J1\\J1 - WhackAThread\\ConsoleApplication1\\Mole.h*",
+              "RelativeToolTip": "ConsoleApplication1\\Mole.h*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-11-18T05:56:21.537Z",
+              "EditorCaption": ""
             }
           ]
         }
