@@ -125,11 +125,15 @@
   <ItemGroup>
     <ClCompile Include="ConsoleApplication1.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameQueue.cpp" />
     <ClCompile Include="Mole.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameQueue.h" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="Mole.h" />
+    <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

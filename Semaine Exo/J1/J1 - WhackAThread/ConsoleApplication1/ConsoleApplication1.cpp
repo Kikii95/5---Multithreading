@@ -4,11 +4,13 @@
 #include <time.h>
 #include "Game.h"
 #include "utils.h"
+#include "Message.h"
 
 #define UI_HEADER_Y 0
 #define UI_GAME_Y 3
 #define UI_STATUS_Y 20
 #define UI_HELP_Y 22
+#define UI_EVENTS_Y 24
 
 void RenderUI(Game* game) {
     PrintAt(0, UI_HEADER_Y, "====================================", COLOR_CYAN);
@@ -130,6 +132,24 @@ int main() {
             else {
                 PrintAtf(0, UI_STATUS_Y + 3, COLOR_RED,
                     "MISS! Wrong key! -1 point                    ");
+            }
+        }
+
+        // Process message queue (pop events from threads)
+        Message msg;
+        while (TryPopMessage(game->messageQueue, &msg)) {
+            switch (msg.type) {
+            case MSG_MOLE_SPAWNED:
+                // Optional: log spawn events
+                break;
+            case MSG_MOLE_KILLED:
+                PrintAtf(0, UI_EVENTS_Y, COLOR_GREEN,
+                    "[EVENT] Mole #%d KILLED! +1 point        ", msg.moleId);
+                break;
+            case MSG_MOLE_EXPIRED:
+                PrintAtf(0, UI_EVENTS_Y, COLOR_RED,
+                    "[EVENT] Mole #%d EXPIRED! -1 point       ", msg.moleId);
+                break;
             }
         }
 

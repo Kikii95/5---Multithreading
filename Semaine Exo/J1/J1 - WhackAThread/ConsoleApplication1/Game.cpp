@@ -26,6 +26,13 @@ Game* CreateGame(int difficulty) {
     game->running = 0;
     game->nextMoleId = 1;
 
+    // Create message queue for thread communication
+    game->messageQueue = CreateMessageQueue();
+    if (game->messageQueue == NULL) {
+        free(game);
+        return NULL;
+    }
+
     switch (difficulty) {
     case 1: // Easy
         game->spawnIntervalMs = 2000;
@@ -92,16 +99,20 @@ void StopGame(Game* game) {
 
 void SpawnMole(Game* game) {
     if (game->moleCount >= MAX_MOLES) {
-        return; 
+        return;
     }
 
     char key = RandomKey();
     int lifetime = RandomRange(game->minLifeMs, game->maxLifeMs);
 
-    Mole* mole = CreateMole(game->nextMoleId++, key, lifetime);
+    Mole* mole = CreateMole(game->nextMoleId++, key, lifetime, game->messageQueue);
     if (mole == NULL) return;
 
     game->moles[game->moleCount++] = mole;
+
+    // Push spawn message
+    Message msg(MSG_MOLE_SPAWNED, mole->id, mole->key);
+    TryPushMessage(game->messageQueue, msg);
 }
 
 BOOL TryKillMole(Game* game, char key, int* outMoleId) {
@@ -170,6 +181,11 @@ void DestroyGame(Game* game) {
         if (game->moles[i] != NULL) {
             DestroyMole(game->moles[i]);
         }
+    }
+
+    // Destroy message queue
+    if (game->messageQueue != NULL) {
+        DestroyMessageQueue(game->messageQueue);
     }
 
     free(game);

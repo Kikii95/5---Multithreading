@@ -3,21 +3,23 @@
 
 #include <windows.h>
 #include "Mole.h"
+#include "GameQueue.h"
 
 #define MAX_MOLES 100
 
 typedef struct {
-    Mole* moles[MAX_MOLES];    
-    int moleCount;             
-    volatile LONG score;        
-    volatile LONG running;      
-    HANDLE spawnerThread;       
+    Mole* moles[MAX_MOLES];
+    int moleCount;
+    volatile LONG score;
+    volatile LONG running;
+    HANDLE spawnerThread;
+    GameMessageQueue messageQueue;  // SafeQueue for thread communication
 
-    int difficulty;             
-    int spawnIntervalMs;       
-    int minLifeMs;              
-    int maxLifeMs;             
-    int nextMoleId;             
+    int difficulty;
+    int spawnIntervalMs;
+    int minLifeMs;
+    int maxLifeMs;
+    int nextMoleId;
 } Game;
 
 DWORD WINAPI SpawnerThreadFunc(LPVOID param);

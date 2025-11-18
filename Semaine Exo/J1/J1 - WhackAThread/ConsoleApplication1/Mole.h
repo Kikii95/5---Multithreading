@@ -2,20 +2,22 @@
 #define MOLE_H
 
 #include <windows.h>
+#include "GameQueue.h"
 
 typedef struct {
     int id;
-    char key;              
-    int lifetimeMs;        
-    volatile LONG alive;    
-    volatile LONG killed;   
-    HANDLE thread;          
-    DWORD startTime;      
+    char key;
+    int lifetimeMs;
+    volatile LONG alive;
+    volatile LONG killed;
+    HANDLE thread;
+    DWORD startTime;
+    GameMessageQueue messageQueue;  // Pointer to game message queue
 } Mole;
 
 DWORD WINAPI MoleThreadFunc(LPVOID param);
 
-Mole* CreateMole(int id, char key, int lifetimeMs);
+Mole* CreateMole(int id, char key, int lifetimeMs, GameMessageQueue queue);
 
 BOOL IsMoleAlive(Mole* mole);
 

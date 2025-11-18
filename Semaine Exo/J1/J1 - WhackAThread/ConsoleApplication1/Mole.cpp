@@ -1,5 +1,6 @@
 #include "Mole.h"
 #include "utils.h"
+#include "Message.h"
 #include <stdlib.h>
 
 DWORD WINAPI MoleThreadFunc(LPVOID param) {
@@ -10,19 +11,27 @@ DWORD WINAPI MoleThreadFunc(LPVOID param) {
 
     while (GetTickCount() < endTime) {
         if (InterlockedCompareExchange(&mole->alive, 0, 0) == 0) {
+            // Killed by user, exit immediately
             return 0;
         }
 
-        Sleep(10); 
+        Sleep(10);
     }
 
+    // Timeout expired - push message to queue
     InterlockedExchange(&mole->alive, 0);
     InterlockedExchange(&mole->killed, 0);
+
+    // Push EXPIRED message
+    if (mole->messageQueue != NULL) {
+        Message msg(MSG_MOLE_EXPIRED, mole->id, mole->key);
+        TryPushMessage(mole->messageQueue, msg);
+    }
 
     return 0;
 }
 
-Mole* CreateMole(int id, char key, int lifetimeMs) {
+Mole* CreateMole(int id, char key, int lifetimeMs, GameMessageQueue queue) {
     Mole* mole = (Mole*)malloc(sizeof(Mole));
     if (mole == NULL) return NULL;
 
@@ -32,14 +41,15 @@ Mole* CreateMole(int id, char key, int lifetimeMs) {
     mole->alive = 1;
     mole->killed = 0;
     mole->startTime = GetTickCount();
+    mole->messageQueue = queue;
 
     DWORD threadId;
     mole->thread = CreateThread(
-        NULL,                   
-        0,                     
-        MoleThreadFunc,        
-        mole,                 
-        0,                     
+        NULL,
+        0,
+        MoleThreadFunc,
+        mole,
+        0,
         &threadId
     );
 
@@ -58,6 +68,13 @@ BOOL IsMoleAlive(Mole* mole) {
 BOOL KillMole(Mole* mole) {
     if (InterlockedCompareExchange(&mole->alive, 0, 1) == 1) {
         InterlockedExchange(&mole->killed, 1);
+
+        // Push KILLED message
+        if (mole->messageQueue != NULL) {
+            Message msg(MSG_MOLE_KILLED, mole->id, mole->key);
+            TryPushMessage(mole->messageQueue, msg);
+        }
+
         return TRUE;
     }
 
