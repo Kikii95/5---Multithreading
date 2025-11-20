@@ -1,8 +1,2 @@
-﻿  CollisionDetector.cpp
-C:\Users\killi\source\Année 3\5---Multithreading\Semaine Exo\J3\CollisionDetector.cpp(27,19): warning C4244: '=' : conversion de 'int' en 'SHORT', perte possible de données
-C:\Users\killi\source\Année 3\5---Multithreading\Semaine Exo\J3\CollisionDetector.cpp(55,15): warning C4244: '=' : conversion de 'int' en 'SHORT', perte possible de données
-  main.cpp
-  Génération de code en cours...
-  CollisionBenchmark.vcxproj -> C:\Users\killi\source\Année 3\5---Multithreading\Semaine Exo\J3\x64\Debug\CollisionBenchmark.exe
-  'pwsh.exe' n'est pas reconnu en tant que commande interne
-  ou externe, un programme exécutable ou un fichier de commandes.
+﻿  main.cpp
+  CollisionBenchmark.vcxproj -> C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J3\x64\Debug\CollisionBenchmark.exe

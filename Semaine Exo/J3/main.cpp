@@ -5,11 +5,11 @@
 #include "Sphere.h"
 #include "CollisionDetector.h"
 
-#define NUM_SPHERES 5000
+#define NUM_SPHERES 50000
 #define WORLD_SIZE 1000.0f
 #define MIN_RADIUS 1.0f
 #define MAX_RADIUS 5.0f
-#define MAX_COLLISIONS 100000
+#define MAX_COLLISIONS 1000000
 
 #define COLOR_RESET 7
 #define COLOR_INFO 11      // Cyan
