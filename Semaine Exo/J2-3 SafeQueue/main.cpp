@@ -7,8 +7,8 @@
 
 #define QUEUE_SIZE 10
 #define ITEMS_PER_PRODUCER 20
-#define NUM_PRODUCERS 4
-#define NUM_CONSUMERS 3
+#define NUM_PRODUCERS 55
+#define NUM_CONSUMERS 50
 
 #define COLOR_RESET 7
 #define COLOR_PRODUCER 10  // Vert
@@ -141,7 +141,6 @@ int main() {
         consumerParams[i].id = i;
         consumerParams[i].itemCount = itemsPerConsumer;
 
-        // Le dernier consumer prend les items restants
         if (i == NUM_CONSUMERS - 1) {
             consumerParams[i].itemCount += remainingItems;
         }
