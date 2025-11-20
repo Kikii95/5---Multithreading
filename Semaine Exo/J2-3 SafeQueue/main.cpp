@@ -7,8 +7,8 @@
 
 #define QUEUE_SIZE 10
 #define ITEMS_PER_PRODUCER 20
-#define NUM_PRODUCERS 2
-#define NUM_CONSUMERS 2
+#define NUM_PRODUCERS 4
+#define NUM_CONSUMERS 3
 
 #define COLOR_RESET 7
 #define COLOR_PRODUCER 10  // Vert
