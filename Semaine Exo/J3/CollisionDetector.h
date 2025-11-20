@@ -9,6 +9,8 @@ struct CollisionPair {
     int sphereId2;
 };
 
+DWORD WINAPI ProgressMonitorThread(LPVOID param);
+
 struct ProgressMonitor {
     volatile LONG comparisonsCompleted;
     long long totalComparisons;
@@ -37,8 +39,6 @@ struct ProgressMonitor {
         InterlockedIncrement(&comparisonsCompleted);
     }
 };
-
-DWORD WINAPI ProgressMonitorThread(LPVOID param);
 
 struct CollisionResult {
     CollisionPair* collisions;

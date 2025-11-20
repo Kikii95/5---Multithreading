@@ -246,7 +246,6 @@ int main() {
     printf("\n");
     PrintSeparator();
 
-    long long totalComparisons = ((long long)NUM_SPHERES * (NUM_SPHERES - 1)) / 2;
     PrintColored(COLOR_INFO, "Complexite: O(n^2) - %lld comparaisons effectuees\n", totalComparisons);
 
     printf("\n");
