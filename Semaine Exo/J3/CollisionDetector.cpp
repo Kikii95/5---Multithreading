@@ -66,6 +66,8 @@ DWORD WINAPI ProgressMonitorThread(LPVOID param) {
 
 int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* result, ProgressMonitor* progress) {
     int collisions = 0;
+    int progressCounter = 0;
+    const int PROGRESS_BATCH = 10000;  // Update tous les 10000 comparaisons
 
     for (int i = 0; i < count - 1; i++) {
         for (int j = i + 1; j < count; j++) {
@@ -74,10 +76,20 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* 
                 collisions++;
             }
 
+            // Increment par batch pour reduire overhead
             if (progress != NULL) {
-                progress->IncrementProgress();
+                progressCounter++;
+                if (progressCounter >= PROGRESS_BATCH) {
+                    InterlockedExchangeAdd(&progress->comparisonsCompleted, PROGRESS_BATCH);
+                    progressCounter = 0;
+                }
             }
         }
+    }
+
+    // Ajouter le reste
+    if (progress != NULL && progressCounter > 0) {
+        InterlockedExchangeAdd(&progress->comparisonsCompleted, progressCounter);
     }
 
     return collisions;
@@ -87,6 +99,8 @@ DWORD WINAPI CollisionWorkerThread(LPVOID param) {
     ThreadWorkParams* params = (ThreadWorkParams*)param;
 
     int localCollisions = 0;
+    int progressCounter = 0;
+    const int PROGRESS_BATCH = 10000;  // Update tous les 10000 comparaisons
 
     for (int i = params->startIndex; i < params->endIndex; i++) {
         for (int j = i + 1; j < params->totalSpheres; j++) {
@@ -95,10 +109,20 @@ DWORD WINAPI CollisionWorkerThread(LPVOID param) {
                 localCollisions++;
             }
 
+            // Increment par batch pour reduire overhead
             if (params->progress != NULL) {
-                params->progress->IncrementProgress();
+                progressCounter++;
+                if (progressCounter >= PROGRESS_BATCH) {
+                    InterlockedExchangeAdd(&params->progress->comparisonsCompleted, PROGRESS_BATCH);
+                    progressCounter = 0;
+                }
             }
         }
+    }
+
+    // Ajouter le reste
+    if (params->progress != NULL && progressCounter > 0) {
+        InterlockedExchangeAdd(&params->progress->comparisonsCompleted, progressCounter);
     }
 
     return localCollisions;

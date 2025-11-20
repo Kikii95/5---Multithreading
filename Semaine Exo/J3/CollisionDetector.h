@@ -34,10 +34,6 @@ struct ProgressMonitor {
             CloseHandle(monitorThread);
         }
     }
-
-    void IncrementProgress() {
-        InterlockedIncrement(&comparisonsCompleted);
-    }
 };
 
 struct CollisionResult {
