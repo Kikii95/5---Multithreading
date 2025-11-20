@@ -1,0 +1,15 @@
+﻿  main.cpp
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J3\CollisionDetector.h(25,47): error C2065: 'ProgressMonitorThread' : identificateur non déclaré
+  (compiler le fichier source 'main.cpp')
+  
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J3\main.cpp(249,15): error C2374: 'totalComparisons' : redéfinition ; initialisation multiple
+      C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J3\main.cpp(94,15):
+      voir la déclaration de 'totalComparisons'
+  
+  CollisionDetector.cpp
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J3\CollisionDetector.h(25,47): error C2065: 'ProgressMonitorThread' : identificateur non déclaré
+  (compiler le fichier source 'CollisionDetector.cpp')
+  
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J3\CollisionDetector.cpp(27,19): warning C4244: '=' : conversion de 'int' en 'SHORT', perte possible de données
+C:\Users\kabboud\Documents\GitHub\5---Multithreading\Semaine Exo\J3\CollisionDetector.cpp(55,15): warning C4244: '=' : conversion de 'int' en 'SHORT', perte possible de données
+  Génération de code en cours...

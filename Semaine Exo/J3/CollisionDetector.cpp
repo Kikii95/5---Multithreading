@@ -1,7 +1,6 @@
 #include "CollisionDetector.h"
 #include <stdio.h>
 
-// Thread de monitoring de progression
 DWORD WINAPI ProgressMonitorThread(LPVOID param) {
     ProgressMonitor* monitor = (ProgressMonitor*)param;
 
@@ -17,14 +16,12 @@ DWORD WINAPI ProgressMonitorThread(LPVOID param) {
         DWORD elapsed = GetTickCount() - monitor->startTime;
         float elapsedSeconds = elapsed / 1000.0f;
 
-        // Estimation temps restant
         float remainingSeconds = 0;
         if (completed > 0) {
             float timePerComparison = elapsedSeconds / completed;
             remainingSeconds = timePerComparison * (monitor->totalComparisons - completed);
         }
 
-        // Barre de progression
         COORD coord;
         coord.X = 0;
         coord.Y = startY;
@@ -47,13 +44,12 @@ DWORD WINAPI ProgressMonitorThread(LPVOID param) {
             printf(" | Reste: ~%.1fs", remainingSeconds);
         }
 
-        printf("        \r");  // Espaces pour effacer l'ancien texte
+        printf("        \r");
         fflush(stdout);
 
-        Sleep(100);  // Update toutes les 100ms
+        Sleep(100);
     }
 
-    // Barre finale complete
     COORD coord;
     coord.X = 0;
     coord.Y = startY;
@@ -68,7 +64,6 @@ DWORD WINAPI ProgressMonitorThread(LPVOID param) {
     return 0;
 }
 
-// VERSION SINGLE-THREADED
 int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* result, ProgressMonitor* progress) {
     int collisions = 0;
 
@@ -79,7 +74,6 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* 
                 collisions++;
             }
 
-            // Incrementer la progression
             if (progress != NULL) {
                 progress->IncrementProgress();
             }
@@ -89,13 +83,11 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* 
     return collisions;
 }
 
-// Thread worker pour detection parallele
 DWORD WINAPI CollisionWorkerThread(LPVOID param) {
     ThreadWorkParams* params = (ThreadWorkParams*)param;
 
     int localCollisions = 0;
 
-    // Chaque thread traite une plage de spheres
     for (int i = params->startIndex; i < params->endIndex; i++) {
         for (int j = i + 1; j < params->totalSpheres; j++) {
             if (CheckCollision(params->spheres[i], params->spheres[j])) {
@@ -103,7 +95,6 @@ DWORD WINAPI CollisionWorkerThread(LPVOID param) {
                 localCollisions++;
             }
 
-            // Incrementer la progression
             if (params->progress != NULL) {
                 params->progress->IncrementProgress();
             }
@@ -113,7 +104,6 @@ DWORD WINAPI CollisionWorkerThread(LPVOID param) {
     return localCollisions;
 }
 
-// VERSION MULTI-THREADED
 int DetectCollisionsMultiThreaded(Sphere* spheres, int count, CollisionResult* result, int numThreads, ProgressMonitor* progress) {
     if (numThreads <= 0) numThreads = 1;
     if (numThreads > count) numThreads = count;
@@ -124,7 +114,6 @@ int DetectCollisionsMultiThreaded(Sphere* spheres, int count, CollisionResult* r
     int spheresPerThread = count / numThreads;
     int remainingSpheres = count % numThreads;
 
-    // Creer les threads
     int startIdx = 0;
     for (int i = 0; i < numThreads; i++) {
         int endIdx = startIdx + spheresPerThread;
@@ -151,10 +140,8 @@ int DetectCollisionsMultiThreaded(Sphere* spheres, int count, CollisionResult* r
         startIdx = endIdx;
     }
 
-    // Attendre tous les threads
     WaitForMultipleObjects(numThreads, threads, TRUE, INFINITE);
 
-    // Nettoyer
     for (int i = 0; i < numThreads; i++) {
         CloseHandle(threads[i]);
     }

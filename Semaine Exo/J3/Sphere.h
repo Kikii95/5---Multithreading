@@ -21,7 +21,6 @@ struct Sphere {
     Sphere(Point3D c, float r, int i) : center(c), radius(r), id(i) {}
 };
 
-// Calcule la distance entre deux points
 inline float Distance3D(const Point3D& p1, const Point3D& p2) {
     float dx = p2.x - p1.x;
     float dy = p2.y - p1.y;
@@ -29,7 +28,6 @@ inline float Distance3D(const Point3D& p1, const Point3D& p2) {
     return sqrtf(dx * dx + dy * dy + dz * dz);
 }
 
-// Verifie si deux spheres sont en collision
 inline bool CheckCollision(const Sphere& s1, const Sphere& s2) {
     float distance = Distance3D(s1.center, s2.center);
     float sumRadius = s1.radius + s2.radius;

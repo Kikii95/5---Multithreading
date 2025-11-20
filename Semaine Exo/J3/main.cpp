@@ -5,14 +5,12 @@
 #include "Sphere.h"
 #include "CollisionDetector.h"
 
-// Configuration du benchmark
 #define NUM_SPHERES 5000
 #define WORLD_SIZE 1000.0f
 #define MIN_RADIUS 1.0f
 #define MAX_RADIUS 5.0f
 #define MAX_COLLISIONS 100000
 
-// Couleurs console
 #define COLOR_RESET 7
 #define COLOR_INFO 11      // Cyan
 #define COLOR_SUCCESS 10   // Vert
@@ -34,7 +32,6 @@ void PrintColored(int color, const char* format, ...) {
     SetColor(COLOR_RESET);
 }
 
-// Genere des spheres aleatoires dans l'espace 3D
 Sphere* GenerateRandomSpheres(int count) {
     Sphere* spheres = new Sphere[count];
 
@@ -50,7 +47,6 @@ Sphere* GenerateRandomSpheres(int count) {
     return spheres;
 }
 
-// Fonction pour obtenir le nombre de threads optimal
 int GetOptimalThreadCount() {
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
@@ -95,14 +91,12 @@ int main() {
 
     CollisionResult* resultSingle = new CollisionResult(MAX_COLLISIONS);
 
-    // Calcul du nombre total de comparaisons
     long long totalComparisons = ((long long)NUM_SPHERES * (NUM_SPHERES - 1)) / 2;
 
-    // Creer le moniteur de progression
     ProgressMonitor progressSingle(totalComparisons);
     progressSingle.Start();
 
-    printf("\n");  // Ligne pour la barre de progression
+    printf("\n");  
 
     DWORD startSingle = GetTickCount();
     int collisionsSingle = DetectCollisionsSingleThreaded(spheres, NUM_SPHERES, resultSingle, &progressSingle);
@@ -129,7 +123,7 @@ int main() {
     ProgressMonitor progress2(totalComparisons);
     progress2.Start();
 
-    printf("\n");  // Ligne pour la barre de progression
+    printf("\n"); 
 
     DWORD start2 = GetTickCount();
     int collisions2 = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, result2Threads, 2, &progress2);
@@ -163,7 +157,7 @@ int main() {
     ProgressMonitor progress4(totalComparisons);
     progress4.Start();
 
-    printf("\n");  // Ligne pour la barre de progression
+    printf("\n");
 
     DWORD start4 = GetTickCount();
     int collisions4 = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, result4Threads, 4, &progress4);
@@ -197,7 +191,7 @@ int main() {
     ProgressMonitor progressOpt(totalComparisons);
     progressOpt.Start();
 
-    printf("\n");  // Ligne pour la barre de progression
+    printf("\n");
 
     DWORD startOpt = GetTickCount();
     int collisionsOpt = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, resultOptimal, optimalThreads, &progressOpt);
@@ -240,7 +234,6 @@ int main() {
 
     printf("\n");
 
-    // Determiner la meilleure methode
     DWORD bestTime = durationSingle;
     const char* bestMethod = "Single-threaded";
 
@@ -253,7 +246,6 @@ int main() {
     printf("\n");
     PrintSeparator();
 
-    // Calcul de la complexite
     long long totalComparisons = ((long long)NUM_SPHERES * (NUM_SPHERES - 1)) / 2;
     PrintColored(COLOR_INFO, "Complexite: O(n^2) - %lld comparaisons effectuees\n", totalComparisons);
 
@@ -263,7 +255,6 @@ int main() {
 
     printf("\n");
 
-    // Nettoyage
     delete resultSingle;
     delete result2Threads;
     delete result4Threads;

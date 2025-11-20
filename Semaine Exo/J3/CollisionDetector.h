@@ -4,13 +4,11 @@
 #include <windows.h>
 #include "Sphere.h"
 
-// Structure pour stocker une collision detectee
 struct CollisionPair {
     int sphereId1;
     int sphereId2;
 };
 
-// Structure pour suivre la progression
 struct ProgressMonitor {
     volatile LONG comparisonsCompleted;
     long long totalComparisons;
@@ -40,10 +38,8 @@ struct ProgressMonitor {
     }
 };
 
-// Thread de monitoring de progression
 DWORD WINAPI ProgressMonitorThread(LPVOID param);
 
-// Structure pour les resultats de detection
 struct CollisionResult {
     CollisionPair* collisions;
     int collisionCount;
@@ -71,7 +67,6 @@ struct CollisionResult {
     }
 };
 
-// Structure pour les parametres de thread
 struct ThreadWorkParams {
     Sphere* spheres;
     int totalSpheres;
@@ -81,13 +76,10 @@ struct ThreadWorkParams {
     ProgressMonitor* progress;
 };
 
-// SINGLE-THREADED : Detection de collisions simple
 int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* result, ProgressMonitor* progress = NULL);
 
-// MULTI-THREADED : Detection de collisions parallele
 int DetectCollisionsMultiThreaded(Sphere* spheres, int count, CollisionResult* result, int numThreads, ProgressMonitor* progress = NULL);
 
-// Fonction de travail pour les threads
 DWORD WINAPI CollisionWorkerThread(LPVOID param);
 
 #endif // COLLISIONDETECTOR_H
