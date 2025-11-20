@@ -95,10 +95,21 @@ int main() {
 
     CollisionResult* resultSingle = new CollisionResult(MAX_COLLISIONS);
 
+    // Calcul du nombre total de comparaisons
+    long long totalComparisons = ((long long)NUM_SPHERES * (NUM_SPHERES - 1)) / 2;
+
+    // Creer le moniteur de progression
+    ProgressMonitor progressSingle(totalComparisons);
+    progressSingle.Start();
+
+    printf("\n");  // Ligne pour la barre de progression
+
     DWORD startSingle = GetTickCount();
-    int collisionsSingle = DetectCollisionsSingleThreaded(spheres, NUM_SPHERES, resultSingle);
+    int collisionsSingle = DetectCollisionsSingleThreaded(spheres, NUM_SPHERES, resultSingle, &progressSingle);
     DWORD endSingle = GetTickCount();
     DWORD durationSingle = endSingle - startSingle;
+
+    progressSingle.Stop();
 
     PrintColored(COLOR_SUCCESS, "Collisions detectees: %d\n", collisionsSingle);
     PrintColored(COLOR_SUCCESS, "Temps d'execution: %lu ms (%.3f secondes)\n",
@@ -115,10 +126,17 @@ int main() {
 
     CollisionResult* result2Threads = new CollisionResult(MAX_COLLISIONS);
 
+    ProgressMonitor progress2(totalComparisons);
+    progress2.Start();
+
+    printf("\n");  // Ligne pour la barre de progression
+
     DWORD start2 = GetTickCount();
-    int collisions2 = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, result2Threads, 2);
+    int collisions2 = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, result2Threads, 2, &progress2);
     DWORD end2 = GetTickCount();
     DWORD duration2 = end2 - start2;
+
+    progress2.Stop();
 
     PrintColored(COLOR_SUCCESS, "Collisions detectees: %d\n", collisions2);
     PrintColored(COLOR_SUCCESS, "Temps d'execution: %lu ms (%.3f secondes)\n",
@@ -142,10 +160,17 @@ int main() {
 
     CollisionResult* result4Threads = new CollisionResult(MAX_COLLISIONS);
 
+    ProgressMonitor progress4(totalComparisons);
+    progress4.Start();
+
+    printf("\n");  // Ligne pour la barre de progression
+
     DWORD start4 = GetTickCount();
-    int collisions4 = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, result4Threads, 4);
+    int collisions4 = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, result4Threads, 4, &progress4);
     DWORD end4 = GetTickCount();
     DWORD duration4 = end4 - start4;
+
+    progress4.Stop();
 
     PrintColored(COLOR_SUCCESS, "Collisions detectees: %d\n", collisions4);
     PrintColored(COLOR_SUCCESS, "Temps d'execution: %lu ms (%.3f secondes)\n",
@@ -169,10 +194,17 @@ int main() {
 
     CollisionResult* resultOptimal = new CollisionResult(MAX_COLLISIONS);
 
+    ProgressMonitor progressOpt(totalComparisons);
+    progressOpt.Start();
+
+    printf("\n");  // Ligne pour la barre de progression
+
     DWORD startOpt = GetTickCount();
-    int collisionsOpt = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, resultOptimal, optimalThreads);
+    int collisionsOpt = DetectCollisionsMultiThreaded(spheres, NUM_SPHERES, resultOptimal, optimalThreads, &progressOpt);
     DWORD endOpt = GetTickCount();
     DWORD durationOpt = endOpt - startOpt;
+
+    progressOpt.Stop();
 
     PrintColored(COLOR_SUCCESS, "Collisions detectees: %d\n", collisionsOpt);
     PrintColored(COLOR_SUCCESS, "Temps d'execution: %lu ms (%.3f secondes)\n",
