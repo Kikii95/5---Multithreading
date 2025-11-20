@@ -133,11 +133,18 @@ int main() {
 
     HANDLE consumerThreads[NUM_CONSUMERS];
     ThreadParams consumerParams[NUM_CONSUMERS];
-    int itemsPerConsumer = (ITEMS_PER_PRODUCER * NUM_PRODUCERS) / NUM_CONSUMERS;
+    int totalItems = ITEMS_PER_PRODUCER * NUM_PRODUCERS;
+    int itemsPerConsumer = totalItems / NUM_CONSUMERS;
+    int remainingItems = totalItems % NUM_CONSUMERS;
 
     for (int i = 0; i < NUM_CONSUMERS; i++) {
         consumerParams[i].id = i;
         consumerParams[i].itemCount = itemsPerConsumer;
+
+        // Le dernier consumer prend les items restants
+        if (i == NUM_CONSUMERS - 1) {
+            consumerParams[i].itemCount += remainingItems;
+        }
 
         consumerThreads[i] = CreateThread(
             NULL,
