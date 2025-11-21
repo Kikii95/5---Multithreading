@@ -10,7 +10,7 @@
 #define WORLD_SIZE 500.0f
 #define MIN_RADIUS 1.0f
 #define MAX_RADIUS 50.0f
-#define MAX_COLLISIONS 1000000
+#define MAX_COLLISIONS 50000000  // ← AUGMENTE 50x (50 millions pour grandes spheres)
 
 // Couleurs console
 #define COLOR_RESET 7
@@ -218,7 +218,7 @@ int main() {
     PrintSeparator();
 
     // ============================================
-    // BENCHMARK 5 : SafeQueue + ACCUMULATION LOCALE (optimisé)
+    // BENCHMARK 5 : SafeQueue + ACCUMULATION LOCALE (optimise)
     // ============================================
     PrintColored(COLOR_INFO, "TEST 5: SAFEQUEUE OPTIMISE (%d Producers + %d Consumers + Accumulation Locale)\n", numProducers, numConsumers);
     PrintSeparator();
@@ -246,7 +246,7 @@ int main() {
         PrintColored(COLOR_WARNING, "Speedup: %.2fx (plus lent)\n", speedup5);
     }
 
-    // Comparaison avec version non-optimisée
+    // Comparaison avec version non-optimisee
     float gainVsNonOptimized = (float)duration4 / duration5;
     if (gainVsNonOptimized > 1.0f) {
         PrintColored(COLOR_SUCCESS, "Gain vs SafeQueue standard: %.2fx plus rapide!\n", gainVsNonOptimized);

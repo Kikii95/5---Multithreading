@@ -11,8 +11,11 @@ DWORD WINAPI ProgressMonitorThread(LPVOID param) {
     int startY = csbi.dwCursorPosition.Y;
 
     while (InterlockedCompareExchange(&monitor->running, 0, 0) == 1) {
-        LONG completed = InterlockedCompareExchange(&monitor->comparisonsCompleted, 0, 0);
+        long long completed = monitor->comparisonsCompleted;  // ← Lecture atomique
         float progress = (float)completed / monitor->totalComparisons * 100.0f;
+
+        // Protection contre overflow (> 100%)
+        if (progress > 100.0f) progress = 100.0f;
 
         DWORD elapsed = GetTickCount() - monitor->startTime;
         float elapsedSeconds = elapsed / 1000.0f;
@@ -83,7 +86,7 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionPair* re
             if (progress != NULL) {
                 progressCounter++;
                 if (progressCounter >= PROGRESS_BATCH) {
-                    InterlockedExchangeAdd(&progress->comparisonsCompleted, PROGRESS_BATCH);
+                    InterlockedExchangeAdd64((volatile LONGLONG*)&progress->comparisonsCompleted, PROGRESS_BATCH);
                     progressCounter = 0;
                 }
             }
@@ -91,7 +94,7 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionPair* re
     }
 
     if (progress != NULL && progressCounter > 0) {
-        InterlockedExchangeAdd(&progress->comparisonsCompleted, progressCounter);
+        InterlockedExchangeAdd64((volatile LONGLONG*)&progress->comparisonsCompleted, progressCounter);
     }
 
     return collisions;
@@ -106,7 +109,17 @@ DWORD WINAPI CollisionProducerThread(LPVOID param) {
     const int PROGRESS_BATCH = 10000;
 
     for (int i = params->startIndex; i < params->endIndex; i++) {
+        // Verifier si on doit arreter (buffer plein)
+        if (InterlockedCompareExchange(params->stopProduction, 0, 0) == 1) {
+            break;  // ← Arreter proprement
+        }
+
         for (int j = i + 1; j < params->totalSpheres; j++) {
+            // Verifier aussi dans boucle interne (check frequent)
+            if (InterlockedCompareExchange(params->stopProduction, 0, 0) == 1) {
+                break;
+            }
+
             if (CheckCollision(params->spheres[i], params->spheres[j])) {
                 // Envoyer la collision dans la SafeQueue
                 CollisionPair collision(params->spheres[i].id, params->spheres[j].id);
@@ -119,15 +132,20 @@ DWORD WINAPI CollisionProducerThread(LPVOID param) {
             if (params->progress != NULL) {
                 progressCounter++;
                 if (progressCounter >= PROGRESS_BATCH) {
-                    InterlockedExchangeAdd(&params->progress->comparisonsCompleted, PROGRESS_BATCH);
+                    InterlockedExchangeAdd64((volatile LONGLONG*)&params->progress->comparisonsCompleted, PROGRESS_BATCH);
                     progressCounter = 0;
                 }
             }
         }
+
+        // Si break de la boucle interne, break aussi de la boucle externe
+        if (InterlockedCompareExchange(params->stopProduction, 0, 0) == 1) {
+            break;
+        }
     }
 
     if (params->progress != NULL && progressCounter > 0) {
-        InterlockedExchangeAdd(&params->progress->comparisonsCompleted, progressCounter);
+        InterlockedExchangeAdd64((volatile LONGLONG*)&params->progress->comparisonsCompleted, progressCounter);
     }
 
     return localCollisions;
@@ -141,6 +159,18 @@ DWORD WINAPI CollisionConsumerThread(LPVOID param) {
 
     while (InterlockedCompareExchange(params->running, 0, 0) == 1 || !params->queue->isEmpty()) {
         CollisionPair collision;
+
+        // Verifier si buffer plein AVANT de pop
+        EnterCriticalSection(params->cs);
+        bool bufferFull = (*params->resultCount >= params->maxResults);
+        LeaveCriticalSection(params->cs);
+
+        if (bufferFull) {
+            // Buffer plein, signaler aux producers d'arreter
+            InterlockedExchange(params->stopProduction, 1);
+            // Arreter ce consumer
+            break;
+        }
 
         // Essayer de recuperer une collision (non-bloquant)
         if (params->queue->tryPop(collision)) {
@@ -172,6 +202,18 @@ DWORD WINAPI CollisionConsumerThreadOptimized(LPVOID param) {
     int totalProcessed = 0;
 
     while (InterlockedCompareExchange(params->running, 0, 0) == 1 || !params->queue->isEmpty()) {
+        // Verifier si buffer plein AVANT de continuer
+        EnterCriticalSection(params->cs);
+        bool bufferFull = (*params->resultCount >= params->maxResults);
+        LeaveCriticalSection(params->cs);
+
+        if (bufferFull) {
+            // Buffer plein, signaler aux producers d'arreter
+            InterlockedExchange(params->stopProduction, 1);
+            // Flush ce qu'on a et arreter
+            break;
+        }
+
         CollisionPair collision;
 
         // Essayer de recuperer une collision (non-bloquant)
@@ -189,6 +231,15 @@ DWORD WINAPI CollisionConsumerThreadOptimized(LPVOID param) {
                            localBuffer,
                            localCount * sizeof(CollisionPair));
                     *params->resultCount += localCount;
+                } else {
+                    // Buffer result plein, stocker ce qu'on peut
+                    int remaining = params->maxResults - *params->resultCount;
+                    if (remaining > 0) {
+                        memcpy(&params->resultBuffer[*params->resultCount],
+                               localBuffer,
+                               remaining * sizeof(CollisionPair));
+                        *params->resultCount += remaining;
+                    }
                 }
                 LeaveCriticalSection(params->cs);
                 localCount = 0;  // Reset buffer local
@@ -207,6 +258,15 @@ DWORD WINAPI CollisionConsumerThreadOptimized(LPVOID param) {
                    localBuffer,
                    localCount * sizeof(CollisionPair));
             *params->resultCount += localCount;
+        } else {
+            // Buffer result plein, stocker ce qu'on peut
+            int remaining = params->maxResults - *params->resultCount;
+            if (remaining > 0) {
+                memcpy(&params->resultBuffer[*params->resultCount],
+                       localBuffer,
+                       remaining * sizeof(CollisionPair));
+                *params->resultCount += remaining;
+            }
         }
         LeaveCriticalSection(params->cs);
     }
@@ -233,6 +293,7 @@ int DetectCollisionsWithSafeQueue(Sphere* spheres, int count, CollisionPair* res
     CRITICAL_SECTION resultCS;
     InitializeCriticalSection(&resultCS);
     volatile LONG producersRunning = numProducers;
+    volatile LONG stopProduction = 0;  // ← Flag d'arret
 
     // Creer les threads PRODUCERS
     HANDLE* producers = new HANDLE[numProducers];
@@ -255,6 +316,7 @@ int DetectCollisionsWithSafeQueue(Sphere* spheres, int count, CollisionPair* res
         producerParams[i].queue = &queue;
         producerParams[i].progress = progress;
         producerParams[i].collisionCount = &collisionCount;
+        producerParams[i].stopProduction = &stopProduction;  // ← Passer le flag
 
         producers[i] = CreateThread(
             NULL,
@@ -279,6 +341,7 @@ int DetectCollisionsWithSafeQueue(Sphere* spheres, int count, CollisionPair* res
         consumerParams[i].maxResults = maxResults;
         consumerParams[i].running = &producersRunning;
         consumerParams[i].cs = &resultCS;
+        consumerParams[i].stopProduction = &stopProduction;  // ← Passer le flag
 
         consumers[i] = CreateThread(
             NULL,
@@ -315,7 +378,7 @@ int DetectCollisionsWithSafeQueue(Sphere* spheres, int count, CollisionPair* res
     return resultCount;
 }
 
-// VERSION MULTI-THREADED avec SafeQueue + ACCUMULATION LOCALE (optimisé)
+// VERSION MULTI-THREADED avec SafeQueue + ACCUMULATION LOCALE (optimise)
 int DetectCollisionsWithSafeQueueOptimized(Sphere* spheres, int count, CollisionPair* results, int maxResults,
                                             int numProducers, int numConsumers, ProgressMonitor* progress) {
     if (numProducers <= 0) numProducers = 1;
@@ -333,8 +396,9 @@ int DetectCollisionsWithSafeQueueOptimized(Sphere* spheres, int count, Collision
     CRITICAL_SECTION resultCS;
     InitializeCriticalSection(&resultCS);
     volatile LONG producersRunning = numProducers;
+    volatile LONG stopProduction = 0;  // ← Flag d'arret
 
-    // Creer les threads PRODUCERS (identique à la version non-optimisée)
+    // Creer les threads PRODUCERS (identique a la version non-optimisee)
     HANDLE* producers = new HANDLE[numProducers];
     ProducerThreadParams* producerParams = new ProducerThreadParams[numProducers];
 
@@ -355,6 +419,7 @@ int DetectCollisionsWithSafeQueueOptimized(Sphere* spheres, int count, Collision
         producerParams[i].queue = &queue;
         producerParams[i].progress = progress;
         producerParams[i].collisionCount = &collisionCount;
+        producerParams[i].stopProduction = &stopProduction;  // ← Passer le flag
 
         producers[i] = CreateThread(
             NULL,
@@ -379,11 +444,12 @@ int DetectCollisionsWithSafeQueueOptimized(Sphere* spheres, int count, Collision
         consumerParams[i].maxResults = maxResults;
         consumerParams[i].running = &producersRunning;
         consumerParams[i].cs = &resultCS;
+        consumerParams[i].stopProduction = &stopProduction;  // ← Passer le flag
 
         consumers[i] = CreateThread(
             NULL,
             0,
-            CollisionConsumerThreadOptimized,  // ← Version optimisée
+            CollisionConsumerThreadOptimized,  // ← Version optimisee
             &consumerParams[i],
             0,
             NULL

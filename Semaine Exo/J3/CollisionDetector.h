@@ -12,7 +12,7 @@ struct CollisionPair {
 DWORD WINAPI ProgressMonitorThread(LPVOID param);
 
 struct ProgressMonitor {
-    volatile LONG comparisonsCompleted;
+    volatile long long comparisonsCompleted;  // ← LONG long pour eviter overflow
     long long totalComparisons;
     volatile LONG running;
     DWORD startTime;

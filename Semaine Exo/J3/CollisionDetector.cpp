@@ -10,8 +10,11 @@ DWORD WINAPI ProgressMonitorThread(LPVOID param) {
     int startY = csbi.dwCursorPosition.Y;
 
     while (InterlockedCompareExchange(&monitor->running, 0, 0) == 1) {
-        LONG completed = InterlockedCompareExchange(&monitor->comparisonsCompleted, 0, 0);
+        long long completed = monitor->comparisonsCompleted;  // ← Lecture atomique
         float progress = (float)completed / monitor->totalComparisons * 100.0f;
+
+        // Protection contre overflow (> 100%)
+        if (progress > 100.0f) progress = 100.0f;
 
         DWORD elapsed = GetTickCount() - monitor->startTime;
         float elapsedSeconds = elapsed / 1000.0f;
@@ -79,7 +82,7 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* 
             if (progress != NULL) {
                 progressCounter++;
                 if (progressCounter >= PROGRESS_BATCH) {
-                    InterlockedExchangeAdd(&progress->comparisonsCompleted, PROGRESS_BATCH);
+                    InterlockedExchangeAdd64((volatile LONGLONG*)&progress->comparisonsCompleted, PROGRESS_BATCH);
                     progressCounter = 0;
                 }
             }
@@ -87,7 +90,7 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionResult* 
     }
 
     if (progress != NULL && progressCounter > 0) {
-        InterlockedExchangeAdd(&progress->comparisonsCompleted, progressCounter);
+        InterlockedExchangeAdd64((volatile LONGLONG*)&progress->comparisonsCompleted, progressCounter);
     }
 
     return collisions;
@@ -110,7 +113,7 @@ DWORD WINAPI CollisionWorkerThread(LPVOID param) {
             if (params->progress != NULL) {
                 progressCounter++;
                 if (progressCounter >= PROGRESS_BATCH) {
-                    InterlockedExchangeAdd(&params->progress->comparisonsCompleted, PROGRESS_BATCH);
+                    InterlockedExchangeAdd64((volatile LONGLONG*)&params->progress->comparisonsCompleted, PROGRESS_BATCH);
                     progressCounter = 0;
                 }
             }
@@ -118,7 +121,7 @@ DWORD WINAPI CollisionWorkerThread(LPVOID param) {
     }
 
     if (params->progress != NULL && progressCounter > 0) {
-        InterlockedExchangeAdd(&params->progress->comparisonsCompleted, progressCounter);
+        InterlockedExchangeAdd64((volatile LONGLONG*)&params->progress->comparisonsCompleted, progressCounter);
     }
 
     return localCollisions;

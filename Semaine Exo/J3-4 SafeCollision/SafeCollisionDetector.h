@@ -19,7 +19,7 @@ DWORD WINAPI ProgressMonitorThread(LPVOID param);
 
 // Structure pour suivre la progression
 struct ProgressMonitor {
-    volatile LONG comparisonsCompleted;
+    volatile long long comparisonsCompleted;  // ← LONG long pour eviter overflow
     long long totalComparisons;
     volatile LONG running;
     DWORD startTime;
@@ -54,7 +54,8 @@ struct ProducerThreadParams {
     int endIndex;
     CollisionQueue* queue;
     ProgressMonitor* progress;
-    volatile LONG* collisionCount;  // Compteur partagé
+    volatile LONG* collisionCount;  // Compteur partage
+    volatile LONG* stopProduction;  // ← Signal d'arret (buffer plein)
 };
 
 // Structure pour les parametres de thread consumer
@@ -65,6 +66,7 @@ struct ConsumerThreadParams {
     int maxResults;
     volatile LONG* running;
     CRITICAL_SECTION* cs;
+    volatile LONG* stopProduction;  // ← Signal d'arret vers producers
 };
 
 // SINGLE-THREADED : Detection de collisions simple
@@ -74,7 +76,7 @@ int DetectCollisionsSingleThreaded(Sphere* spheres, int count, CollisionPair* re
 int DetectCollisionsWithSafeQueue(Sphere* spheres, int count, CollisionPair* results, int maxResults,
                                    int numProducers, int numConsumers, ProgressMonitor* progress = NULL);
 
-// MULTI-THREADED avec SafeQueue + ACCUMULATION LOCALE (optimisé)
+// MULTI-THREADED avec SafeQueue + ACCUMULATION LOCALE (optimise)
 int DetectCollisionsWithSafeQueueOptimized(Sphere* spheres, int count, CollisionPair* results, int maxResults,
                                             int numProducers, int numConsumers, ProgressMonitor* progress = NULL);
 
