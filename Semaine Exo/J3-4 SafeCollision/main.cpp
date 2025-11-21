@@ -5,14 +5,12 @@
 #include "Sphere.h"
 #include "SafeCollisionDetector.h"
 
-// Configuration du benchmark
 #define NUM_SPHERES 10000
 #define WORLD_SIZE 500.0f
 #define MIN_RADIUS 1.0f
-#define MAX_RADIUS 50.0f
-#define MAX_COLLISIONS 50000000  // ← AUGMENTE 50x (50 millions pour grandes spheres)
+#define MAX_RADIUS 10.0f
+#define MAX_COLLISIONS 500000  
 
-// Couleurs console
 #define COLOR_RESET 7
 #define COLOR_INFO 11      // Cyan
 #define COLOR_SUCCESS 10   // Vert
@@ -34,7 +32,6 @@ void PrintColored(int color, const char* format, ...) {
     SetColor(COLOR_RESET);
 }
 
-// Genere des spheres aleatoires dans l'espace 3D
 Sphere* GenerateRandomSpheres(int count) {
     Sphere* spheres = new Sphere[count];
 
@@ -50,7 +47,6 @@ Sphere* GenerateRandomSpheres(int count) {
     return spheres;
 }
 
-// Fonction pour obtenir le nombre de threads optimal
 int GetOptimalThreadCount() {
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
@@ -87,10 +83,8 @@ int main() {
     printf("\n");
     PrintSeparator();
 
-    // Calcul du nombre total de comparaisons
     long long totalComparisons = ((long long)NUM_SPHERES * (NUM_SPHERES - 1)) / 2;
 
-    // Buffer pour les resultats
     CollisionPair* resultBuffer = new CollisionPair[MAX_COLLISIONS];
 
     // ============================================
@@ -246,7 +240,6 @@ int main() {
         PrintColored(COLOR_WARNING, "Speedup: %.2fx (plus lent)\n", speedup5);
     }
 
-    // Comparaison avec version non-optimisee
     float gainVsNonOptimized = (float)duration4 / duration5;
     if (gainVsNonOptimized > 1.0f) {
         PrintColored(COLOR_SUCCESS, "Gain vs SafeQueue standard: %.2fx plus rapide!\n", gainVsNonOptimized);
@@ -279,7 +272,6 @@ int main() {
 
     printf("\n");
 
-    // Determiner la meilleure methode
     DWORD bestTime = durationSingle;
     const char* bestMethod = "Single-threaded";
 
@@ -309,13 +301,7 @@ int main() {
     PrintColored(COLOR_INFO, "Complexite: O(n^2) - %lld comparaisons effectuees\n", totalComparisons);
 
     printf("\n");
-    PrintColored(COLOR_WARNING, "Note: Le pattern Producer-Consumer peut ajouter de l'overhead\n");
-    PrintColored(COLOR_WARNING, "      si les consumers ne sont pas assez rapides (queue pleine).\n");
-    PrintColored(COLOR_WARNING, "      L'accumulation locale reduit la contention sur result buffer.\n");
 
-    printf("\n");
-
-    // Nettoyage
     delete[] resultBuffer;
     delete[] spheres;
 
