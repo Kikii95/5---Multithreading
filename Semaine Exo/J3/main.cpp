@@ -247,11 +247,6 @@ int main() {
     PrintSeparator();
 
     PrintColored(COLOR_INFO, "Complexite: O(n^2) - %lld comparaisons effectuees\n", totalComparisons);
-
-    printf("\n");
-    PrintColored(COLOR_WARNING, "Note: Le speedup depend fortement de la charge CPU et du nombre de cores.\n");
-    PrintColored(COLOR_WARNING, "      L'overhead de creation/synchronisation des threads peut reduire le gain.\n");
-
     printf("\n");
 
     delete resultSingle;
