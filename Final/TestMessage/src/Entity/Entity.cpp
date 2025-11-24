@@ -10,6 +10,7 @@ Entity::SerializedData Entity::Serialize() const {
     data.stats = mStats;
     data.isDead = mIsDead;
 
+    // Si c'est une Ball, serialiser killCount
     const Ball* ball = dynamic_cast<const Ball*>(this);
     if (ball) {
         data.killCount = ball->mKillCount;
@@ -28,6 +29,7 @@ void Entity::Deserialize(const SerializedData& data) {
     mStats = data.stats;
     mIsDead = data.isDead;
 
+    // Si c'est une Ball, deserialiser killCount
     Ball* ball = dynamic_cast<Ball*>(this);
     if (ball) {
         ball->mKillCount = data.killCount;

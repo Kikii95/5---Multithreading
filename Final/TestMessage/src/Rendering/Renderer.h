@@ -4,6 +4,7 @@
 #include "../Core/Utils.h"
 #include <vector>
 
+// Classe pour renderer la simulation SFML
 class Renderer {
 private:
     sf::RenderWindow mWindow;
@@ -24,12 +25,15 @@ private:
 
 public:
     Renderer() : mFontLoaded(false) {
+        // Créer fenêtre
         mWindow.create(
             sf::VideoMode((unsigned int)Config::MAP_WIDTH, (unsigned int)Config::MAP_HEIGHT),
             "Multithreading Collision Test - SFML"
         );
         mWindow.setFramerateLimit(60);
 
+        // Essayer charger font (optionnel)
+        // Si pas de font, on affiche quand même sans texte
     }
 
     bool IsOpen() const {
@@ -51,19 +55,21 @@ public:
     }
 
     void Clear() {
-        mWindow.clear(sf::Color(30, 30, 40));  
+        mWindow.clear(sf::Color(30, 30, 40));  // Fond sombre
     }
 
     void DrawGrid() {
         sf::RectangleShape line;
 
+        // Lignes verticales
         for (int x = 0; x <= Config::MAP_WIDTH; x += (int)Config::CELL_SIZE) {
             line.setSize(sf::Vector2f(1, Config::MAP_HEIGHT));
             line.setPosition((float)x, 0);
-            line.setFillColor(sf::Color(60, 60, 70, 100)); 
+            line.setFillColor(sf::Color(60, 60, 70, 100));  // Gris transparent
             mWindow.draw(line);
         }
 
+        // Lignes horizontales
         for (int y = 0; y <= Config::MAP_HEIGHT; y += (int)Config::CELL_SIZE) {
             line.setSize(sf::Vector2f(Config::MAP_WIDTH, 1));
             line.setPosition(0, (float)y);
@@ -75,9 +81,11 @@ public:
     void DrawBall(Entity* entity) {
         if (!entity || entity->mIsDead) return;
 
+        // Cercle
         sf::CircleShape circle(entity->mRadius);
         circle.setPosition(entity->mPos.x - entity->mRadius, entity->mPos.y - entity->mRadius);
 
+        // Couleur selon thread
         int threadID = entity->mThreadIndex;
         if (threadID >= 0 && threadID < 8) {
             circle.setFillColor(mThreadColors[threadID]);
@@ -85,17 +93,20 @@ public:
             circle.setFillColor(sf::Color::White);
         }
 
+        // Contour noir
         circle.setOutlineThickness(2);
         circle.setOutlineColor(sf::Color::Black);
 
+        // Transparence si en transition
         if (entity->mIsTransitioning) {
             sf::Color col = circle.getFillColor();
-            col.a = 128; 
+            col.a = 128;  // Semi-transparent
             circle.setFillColor(col);
         }
 
         mWindow.draw(circle);
 
+        // Direction (petite ligne)
         sf::Vertex line[] = {
             sf::Vertex(sf::Vector2f(entity->mPos.x, entity->mPos.y)),
             sf::Vertex(sf::Vector2f(
@@ -109,6 +120,11 @@ public:
     }
 
     void DrawHUD(int aliveCount, int totalCollisions, int totalMessages) {
+        // Texte simple (sans font pour éviter erreurs)
+        // On pourrait ajouter sf::Text si on charge une font
+
+        // Pour l'instant, juste afficher stats dans la console
+        // (le texte SFML nécessite une font)
     }
 
     void Display() {

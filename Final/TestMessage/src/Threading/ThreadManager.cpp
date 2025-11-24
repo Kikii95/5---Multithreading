@@ -79,14 +79,17 @@ int ThreadManager::GetAliveCount() {
 }
 
 int ThreadManager::CalculateThreadFromPosition(Vector2 pos) {
+    // Convertir position -> cellule grid
     int cellX = (int)(pos.x / mCellSize);
     int cellY = (int)(pos.y / mCellSize);
 
+    // Clamp
     if (cellX < 0) cellX = 0;
     if (cellX >= mGridWidth) cellX = mGridWidth - 1;
     if (cellY < 0) cellY = 0;
     if (cellY >= mGridHeight) cellY = mGridHeight - 1;
 
+    // Mapper cellule -> thread (round-robin)
     int cellIndex = cellY * mGridWidth + cellX;
     int threadIndex = cellIndex % (int)mThreads.size();
 
@@ -108,7 +111,7 @@ void ThreadManager::CheckGameOver() {
         if (aliveEntities.size() == 1) {
             mWinnerID = aliveEntities[0]->mID;
         } else {
-            mWinnerID = -1; 
+            mWinnerID = -1;  // Egalite (rare)
         }
     }
 }
@@ -141,14 +144,17 @@ void ThreadManager::SpawnBalls(int count) {
     printf("[ThreadManager] Spawning %d balls...\n", count);
 
     for (int i = 0; i < count; i++) {
+        // Position aleatoire
         Vector2 pos(
             Utils::RandomFloat(50, Config::MAP_WIDTH - 50),
             Utils::RandomFloat(50, Config::MAP_HEIGHT - 50)
         );
 
+        // Creer ball
         float radius = Utils::RandomFloat(15, 25);
         Ball* ball = new Ball(i, pos, radius);
 
+        // Assigner au thread correspondant
         int threadID = CalculateThreadFromPosition(pos);
         GetThread(threadID)->AddEntity(ball);
 
