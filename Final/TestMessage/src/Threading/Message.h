@@ -1,10 +1,8 @@
 #pragma once
 #include "../Entity/Entity.h"
 
-// Forward declaration
 class WorkerThread;
 
-// Types de messages
 enum class MessageType {
     COLLISION,
     TRANSITION,
@@ -12,7 +10,7 @@ enum class MessageType {
 };
 
 // ============================================
-// MESSAGE BASE (abstrait)
+// MESSAGE BASE 
 // ============================================
 class Message {
 public:
@@ -21,11 +19,8 @@ public:
     Message(MessageType type) : mType(type) {}
     virtual ~Message() {}
 
-    // Execute doit etre implemente par classes derivees
-    // Prend le thread en contexte pour acceder aux entities locales
     virtual void Execute(WorkerThread* thread) = 0;
 
-    // Pour debug
     virtual const char* GetTypeName() const = 0;
 };
 
@@ -34,9 +29,9 @@ public:
 // ============================================
 class CollisionMessage : public Message {
 public:
-    int sourceEntityID;    // Attaquant
-    int targetEntityID;    // Victime
-    float damageAmount;    // Degats precalcules
+    int sourceEntityID;   
+    int targetEntityID;   
+    float damageAmount;   
     Vector2 collisionPoint;
 
     CollisionMessage(int source, int target, float damage, Vector2 point)
@@ -72,7 +67,7 @@ class KillRewardMessage : public Message {
 public:
     int killerEntityID;
     float hpGain;
-    int victimID;  // Pour log
+    int victimID;  
 
     KillRewardMessage(int killer, float gain, int victim)
         : Message(MessageType::KILL_REWARD),

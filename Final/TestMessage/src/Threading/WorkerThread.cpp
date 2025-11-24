@@ -15,7 +15,6 @@ WorkerThread::WorkerThread(int id, ThreadManager* manager)
 WorkerThread::~WorkerThread() {
     Stop();
 
-    // Liberer entities
     for (Entity* e : mEntities) {
         delete e;
     }
@@ -82,8 +81,8 @@ void WorkerThread::PushMessage(Message* msg) {
 DWORD WINAPI WorkerThread::ThreadProc(LPVOID param) {
     WorkerThread* thread = (WorkerThread*)param;
 
-    const float DELTA_TIME = 0.016f;  // ~60 FPS
-    const int SLEEP_MS = 16;          // 16ms = ~60 FPS
+    const float DELTA_TIME = 0.016f; 
+    const int SLEEP_MS = 16;         
 
     int frameCount = 0;
 
@@ -148,7 +147,6 @@ void WorkerThread::Update(float deltaTime) {
 // DETECT COLLISIONS
 // ============================================
 void WorkerThread::DetectCollisions() {
-    // Recuperer TOUTES les entities (via ThreadManager)
     std::vector<Entity*> allEntities = mManager->GetAllEntities();
 
     for (Entity* myEntity : mEntities) {
@@ -158,7 +156,6 @@ void WorkerThread::DetectCollisions() {
             if (otherEntity == myEntity) continue;
             if (otherEntity->mIsDead || otherEntity->mIsTransitioning) continue;
 
-            // Collision detectee ?
             if (myEntity->Collide(otherEntity)) {
 
                 if (otherEntity->mThreadIndex == mThreadID) {
@@ -169,15 +166,12 @@ void WorkerThread::DetectCollisions() {
                     Ball* otherBall = dynamic_cast<Ball*>(otherEntity);
 
                     if (myBall && otherBall) {
-                        // Calculer degats mutuels
                         float damage1 = myBall->CalculateDamage(otherBall);
                         float damage2 = otherBall->CalculateDamage(myBall);
 
-                        // Appliquer sur les DEUX
                         myBall->mStats.hp -= damage2;
                         otherBall->mStats.hp -= damage1;
 
-                        // Rebond elastique
                         myBall->BounceOff(otherBall);
 
                         printf("[Thread %d] LOCAL collision: Ball %d (HP %.1f) vs Ball %d (HP %.1f)\n",
@@ -186,7 +180,6 @@ void WorkerThread::DetectCollisions() {
 
                         mCollisionsDetected++;
 
-                        // Gerer morts
                         if (myBall->mStats.hp <= 0) {
                             myBall->mIsDead = true;
                             otherBall->mKillCount++;
@@ -215,10 +208,8 @@ void WorkerThread::DetectCollisions() {
                         float damageToOther = myBall->CalculateDamage(otherBall);
                         float damageToMe = otherBall->CalculateDamage(myBall);
 
-                        // Appliquer degats sur MOI localement
                         myBall->mStats.hp -= damageToMe;
 
-                        // Rebond sur moi seulement (l'autre thread gerera son rebond)
                         myBall->BounceOff(otherBall);
 
                         printf("[Thread %d] REMOTE collision: Ball %d (HP %.1f) vs Ball %d (Thread %d)\n",
@@ -227,7 +218,6 @@ void WorkerThread::DetectCollisions() {
 
                         mCollisionsDetected++;
 
-                        // Envoyer message a l'autre thread
                         CollisionMessage* msg = new CollisionMessage(
                             myBall->mID,
                             otherBall->mID,
@@ -241,13 +231,11 @@ void WorkerThread::DetectCollisions() {
                         printf("[Thread %d] -> Sent COLLISION message to Thread %d\n",
                                mThreadID, otherBall->mThreadIndex);
 
-                        // Gerer MA propre mort
                         if (myBall->mStats.hp <= 0) {
                             myBall->mIsDead = true;
                             printf("[Thread %d] *** Ball %d KILLED (remote collision) ***\n",
                                    mThreadID, myBall->mID);
 
-                            // Envoyer kill reward a l'autre
                             KillRewardMessage* reward = new KillRewardMessage(
                                 otherBall->mID, 10.0f, myBall->mID
                             );
@@ -255,7 +243,6 @@ void WorkerThread::DetectCollisions() {
                         }
                     }
                 }
-                // Sinon : l'autre thread gere (mThreadID > otherEntity->mThreadIndex)
             }
         }
     }
@@ -283,24 +270,20 @@ void WorkerThread::CheckTransitions() {
         printf("[Thread %d] Ball %d transitioning to Thread %d (pos: %.1f, %.1f)\n",
                mThreadID, entity->mID, targetThreadID, entity->mPos.x, entity->mPos.y);
 
-        // Marquer en transition (immunite)
         entity->mIsTransitioning = true;
 
-        // Creer message
         TransitionMessage* msg = new TransitionMessage(
             entity->Serialize(),
             mThreadID,
             targetThreadID
         );
 
-        // Envoyer au thread cible
         WorkerThread* targetThread = mManager->GetThread(targetThreadID);
         targetThread->PushMessage(msg);
 
         printf("[Thread %d] -> Sent TRANSITION message to Thread %d\n",
                mThreadID, targetThreadID);
 
-        // Retirer de MA liste
         RemoveEntity(entity);
         delete entity;
     }
