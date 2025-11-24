@@ -5,51 +5,38 @@
 #include "../Entity/Bonus.h"
 #include "../Core/Utils.h"
 #include <vector>
-
-// Classe pour renderer la simulation SFML
 class Renderer {
 private:
     sf::RenderWindow mWindow;
     sf::Font mFont;
     bool mFontLoaded;
-
-    // Couleurs par thread
     sf::Color mThreadColors[8] = {
-        sf::Color(255, 100, 100),  // Rouge (Thread 0)
-        sf::Color(100, 255, 100),  // Vert (Thread 1)
-        sf::Color(100, 100, 255),  // Bleu (Thread 2)
-        sf::Color(255, 255, 100),  // Jaune (Thread 3)
-        sf::Color(255, 100, 255),  // Magenta (Thread 4)
-        sf::Color(100, 255, 255),  // Cyan (Thread 5)
-        sf::Color(255, 200, 100),  // Orange (Thread 6)
-        sf::Color(200, 100, 255)   // Violet (Thread 7)
+        sf::Color(255, 100, 100),  
+        sf::Color(100, 255, 100),  
+        sf::Color(100, 100, 255),  
+        sf::Color(255, 255, 100),  
+        sf::Color(255, 100, 255),  
+        sf::Color(100, 255, 255),  
+        sf::Color(255, 200, 100),  
+        sf::Color(200, 100, 255)   
     };
-
-    // Couleurs bonus
     sf::Color mBonusColors[4] = {
-        sf::Color(255, 50, 50),    // HP Boost - Rouge vif
-        sf::Color(50, 150, 255),   // Speed Boost - Bleu vif
-        sf::Color(255, 220, 50),   // Shield - Jaune doré
-        sf::Color(200, 50, 255)    // Damage Boost - Violet vif
+        sf::Color(255, 50, 50),    
+        sf::Color(50, 150, 255),   
+        sf::Color(255, 220, 50),   
+        sf::Color(200, 50, 255)    
     };
-
 public:
     Renderer() : mFontLoaded(false) {
-        // Créer fenêtre
         mWindow.create(
             sf::VideoMode((unsigned int)Config::MAP_WIDTH, (unsigned int)Config::MAP_HEIGHT),
             "TestComplet - Multithreading Game"
         );
         mWindow.setFramerateLimit(60);
-
-        // Essayer charger font (optionnel)
-        // Si pas de font, on affiche quand même sans texte
     }
-
     bool IsOpen() const {
         return mWindow.isOpen();
     }
-
     void ProcessEvents() {
         sf::Event event;
         while (mWindow.pollEvent(event)) {
@@ -63,23 +50,17 @@ public:
             }
         }
     }
-
     void Clear() {
-        mWindow.clear(sf::Color(30, 30, 40));  // Fond sombre
+        mWindow.clear(sf::Color(30, 30, 40));  
     }
-
     void DrawGrid() {
         sf::RectangleShape line;
-
-        // Lignes verticales
         for (int x = 0; x <= Config::MAP_WIDTH; x += (int)Config::CELL_SIZE) {
             line.setSize(sf::Vector2f(1, Config::MAP_HEIGHT));
             line.setPosition((float)x, 0);
-            line.setFillColor(sf::Color(60, 60, 70, 100));  // Gris transparent
+            line.setFillColor(sf::Color(60, 60, 70, 100));  
             mWindow.draw(line);
         }
-
-        // Lignes horizontales
         for (int y = 0; y <= Config::MAP_HEIGHT; y += (int)Config::CELL_SIZE) {
             line.setSize(sf::Vector2f(Config::MAP_WIDTH, 1));
             line.setPosition(0, (float)y);
@@ -87,61 +68,43 @@ public:
             mWindow.draw(line);
         }
     }
-
     void DrawEntity(Entity* entity) {
         if (!entity || entity->mIsDead) return;
-
-        // Vérifier type
         Player* player = dynamic_cast<Player*>(entity);
         Bonus* bonus = dynamic_cast<Bonus*>(entity);
-
         if (player) {
             DrawPlayer(player);
         } else if (bonus) {
             DrawBonus(bonus);
         }
     }
-
     void DrawPlayer(Player* player) {
         if (!player || player->mIsDead) return;
-
-        // Shield (cercle extérieur si actif)
         if (player->mHasShield) {
             sf::CircleShape shield(player->mRadius + 5.0f);
             shield.setPosition(player->mPos.x - player->mRadius - 5.0f,
                              player->mPos.y - player->mRadius - 5.0f);
             shield.setFillColor(sf::Color::Transparent);
             shield.setOutlineThickness(3);
-            shield.setOutlineColor(sf::Color(255, 220, 50, 180));  // Jaune doré
+            shield.setOutlineColor(sf::Color(255, 220, 50, 180));  
             mWindow.draw(shield);
         }
-
-        // Cercle player
         sf::CircleShape circle(player->mRadius);
         circle.setPosition(player->mPos.x - player->mRadius, player->mPos.y - player->mRadius);
-
-        // Couleur selon thread
         int threadID = player->mThreadIndex;
         if (threadID >= 0 && threadID < 8) {
             circle.setFillColor(mThreadColors[threadID]);
         } else {
             circle.setFillColor(sf::Color::White);
         }
-
-        // Contour noir
         circle.setOutlineThickness(2);
         circle.setOutlineColor(sf::Color::Black);
-
-        // Transparence si en transition
         if (player->mIsTransitioning) {
             sf::Color col = circle.getFillColor();
-            col.a = 128;  // Semi-transparent
+            col.a = 128;  
             circle.setFillColor(col);
         }
-
         mWindow.draw(circle);
-
-        // Direction (petite ligne)
         sf::Vertex line[] = {
             sf::Vertex(sf::Vector2f(player->mPos.x, player->mPos.y)),
             sf::Vertex(sf::Vector2f(
@@ -153,39 +116,22 @@ public:
         line[1].color = sf::Color::White;
         mWindow.draw(line, 2, sf::Lines);
     }
-
     void DrawBonus(Bonus* bonus) {
         if (!bonus || bonus->mIsDead) return;
-
-        // Forme selon type (étoile pour bonus)
-        sf::CircleShape shape(bonus->mRadius, 6);  // Hexagone (6 points)
+        sf::CircleShape shape(bonus->mRadius, 6);  
         shape.setPosition(bonus->mPos.x - bonus->mRadius, bonus->mPos.y - bonus->mRadius);
-
-        // Couleur selon type
         int typeIndex = (int)bonus->mType;
         if (typeIndex >= 0 && typeIndex < 4) {
             shape.setFillColor(mBonusColors[typeIndex]);
         } else {
             shape.setFillColor(sf::Color::White);
         }
-
-        // Contour blanc pour visibilité
         shape.setOutlineThickness(2);
         shape.setOutlineColor(sf::Color::White);
-
-        // Animation pulsation (optionnel - utiliser un timer)
-        // Pour l'instant, simple affichage
         mWindow.draw(shape);
     }
-
     void DrawHUD(int aliveCount, int totalCollisions, int totalMessages, int bonusPickups) {
-        // Texte simple (sans font pour éviter erreurs)
-        // On pourrait ajouter sf::Text si on charge une font
-
-        // Pour l'instant, juste afficher stats dans la console
-        // (le texte SFML nécessite une font)
     }
-
     void Display() {
         mWindow.display();
     }

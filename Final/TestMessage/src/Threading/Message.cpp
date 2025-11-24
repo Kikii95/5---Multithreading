@@ -3,83 +3,48 @@
 #include "ThreadManager.h"
 #include "../Entity/Ball.h"
 #include <stdio.h>
-
-// ============================================
-// COLLISION MESSAGE EXECUTE
-// ============================================
 void CollisionMessage::Execute(WorkerThread* thread) {
     Entity* target = thread->FindEntityByID(targetEntityID);
-
     if (!target || target->mIsDead) {
         printf("[Thread %d] CollisionMessage: Target entity %d not found or dead\n",
                thread->GetThreadID(), targetEntityID);
         return;
     }
-
-    // Appliquer degats
     target->mStats.hp -= damageAmount;
-
     printf("[Thread %d] CollisionMessage: Ball %d hit Ball %d (damage: %.1f, HP: %.1f -> %.1f)\n",
            thread->GetThreadID(), sourceEntityID, targetEntityID,
            damageAmount, target->mStats.hp + damageAmount, target->mStats.hp);
-
-    // Verifier mort
     if (target->mStats.hp <= 0) {
         target->mIsDead = true;
-
         printf("[Thread %d] *** Ball %d KILLED by Ball %d ***\n",
                thread->GetThreadID(), targetEntityID, sourceEntityID);
-
-        // Envoyer recompense au killer
-        // Note : on doit trouver le thread du killer via le manager
-        // Pour simplifier, on va iterer sur tous les threads
-        // (dans une vraie impl, on passerait le ThreadManager en param)
-
-        // Creer KillRewardMessage (sera envoye par WorkerThread apres Execute)
-        // Pour l'instant, on log juste
         printf("[Thread %d] -> Sending kill reward to Ball %d\n",
                thread->GetThreadID(), sourceEntityID);
     }
 }
-
-// ============================================
-// TRANSITION MESSAGE EXECUTE
-// ============================================
 void TransitionMessage::Execute(WorkerThread* thread) {
     if (entityData.isDead) {
         printf("[Thread %d] TransitionMessage: Ball %d is dead, ignoring\n",
                thread->GetThreadID(), entityData.id);
         return;
     }
-
-    // Creer nouvelle Ball depuis donnees serialisees
     Ball* newBall = new Ball(entityData.id, entityData.pos, entityData.radius);
     newBall->Deserialize(entityData);
     newBall->mThreadIndex = thread->GetThreadID();
-    newBall->mIsTransitioning = false;  // Fin transition
-
+    newBall->mIsTransitioning = false;  
     thread->AddEntity(newBall);
-
     printf("[Thread %d] TransitionMessage: Ball %d transferred from Thread %d (pos: %.1f, %.1f)\n",
            thread->GetThreadID(), entityData.id, fromThreadID,
            entityData.pos.x, entityData.pos.y);
 }
-
-// ============================================
-// KILL REWARD MESSAGE EXECUTE
-// ============================================
 void KillRewardMessage::Execute(WorkerThread* thread) {
     Entity* killer = thread->FindEntityByID(killerEntityID);
-
     if (!killer || killer->mIsDead) {
         printf("[Thread %d] KillRewardMessage: Killer entity %d not found\n",
                thread->GetThreadID(), killerEntityID);
         return;
     }
-
-    // Appliquer gain HP
     killer->mStats.hp += hpGain;
-
     Ball* killerBall = dynamic_cast<Ball*>(killer);
     if (killerBall) {
         killerBall->mKillCount++;
